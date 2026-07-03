@@ -27,6 +27,15 @@
   .fm-wrapper{max-width:1140px;margin:0 auto;padding:24px;}
   .fm-titulo{font-size:2rem;margin:0 0 8px;}
   .fm-sub{margin:0 0 24px;color:var(--cinza-texto);}
+  .docs-links{
+    display:flex;flex-wrap:wrap;gap:10px;margin:0 0 26px;
+  }
+  .docs-links a{
+    display:inline-flex;align-items:center;min-height:38px;padding:8px 16px;
+    border:1px solid var(--borda);border-radius:var(--radius-pill);
+    color:#000;text-decoration:none;font-size:.92rem;background:#fff;
+  }
+  .docs-links a:hover{border-color:#000;}
 
   /* ---------- etapas ---------- */
   .etapa{display:none;min-height:510px;animation:fadeIn .5s ease;}
@@ -130,6 +139,36 @@
 
   .sem-produto{padding:40px;text-align:center;color:var(--cinza-claro);font-size:1.1rem;}
 
+  /* ---------- matriz de decisão ---------- */
+  .decision-guide{
+    margin:42px 0 10px;padding-top:28px;border-top:1px solid #eee;
+  }
+  .decision-guide h2{font-size:1.75rem;margin:0 0 10px;}
+  .decision-guide p{color:var(--cinza-texto);}
+  .decision-pillars{
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:20px 0;
+  }
+  .decision-pillar{
+    border:1px solid var(--borda);border-radius:8px;padding:14px;background:#fff;
+  }
+  .decision-pillar strong{display:block;margin-bottom:6px;color:#111;}
+  .decision-pillar span{display:block;color:var(--cinza-texto);font-size:.92rem;line-height:1.45;}
+  .decision-table-wrap{overflow-x:auto;border:1px solid var(--borda);border-radius:8px;margin-top:16px;}
+  .decision-table{width:100%;min-width:880px;border-collapse:collapse;background:#fff;}
+  .decision-table th,.decision-table td{
+    border-bottom:1px solid var(--borda);border-right:1px solid var(--borda);
+    padding:10px 12px;text-align:left;vertical-align:top;font-size:.9rem;line-height:1.45;
+  }
+  .decision-table th{
+    background:#f6f6f6;color:#333;font-size:.76rem;text-transform:uppercase;letter-spacing:.04em;
+  }
+  .decision-table tr:last-child td{border-bottom:0;}
+  .decision-table th:last-child,.decision-table td:last-child{border-right:0;}
+  .decision-more{margin-top:16px;}
+  .decision-more a{
+    color:#000;font-weight:bold;text-decoration:none;border-bottom:1px solid #000;
+  }
+
   /* ---------- responsivo ---------- */
   @media (max-width:768px){
     .produto-item{flex-direction:column;}
@@ -140,6 +179,8 @@
     .img-label img{width:110px;}
     .etapa-introducao h1{font-size:1.6rem;}
     .start-etapa{padding:12px 40px;}
+    .decision-pillars{grid-template-columns:1fr;}
+    .decision-guide h2{font-size:1.45rem;}
   }
 </style>
 </head>
@@ -148,6 +189,11 @@
   <h2 class="fm-titulo">Ferramenta Mágica</h2>
   <p class="fm-sub">Explore nossa ferramenta para descobrir a quilha ideal para o seu momento de surf.
   Lembre-se: cada surfista é único, e a escolha pode variar com a sua experiência e preferências.</p>
+  <nav class="docs-links" aria-label="Documentação da matriz">
+    <a href="#matriz-decisao">Ver matriz de decisão</a>
+    <a href="docs/matriz-decisao-quilhas.html">Documentação completa</a>
+    <a href="docs/quilhas-calculadora-logica.pdf">PDF técnico</a>
+  </nav>
 
   <form id="dynamic-filters" onsubmit="return false;">
 
@@ -250,6 +296,40 @@
     </div>
 
   </form>
+
+  <section class="decision-guide" id="matriz-decisao">
+    <h2>Matriz de decisão</h2>
+    <p>A escolha ideal nasce do cruzamento entre prancha, onda e surfista. A prancha elimina o que não encaixa, o objetivo define o comportamento, a onda confirma a escolha e o surfista ajusta nível e tamanho.</p>
+    <div class="decision-pillars">
+      <div class="decision-pillar"><strong>Compatibilidade</strong><span>Tipo de prancha, modalidade, encaixe e faixa de tamanho vêm primeiro.</span></div>
+      <div class="decision-pillar"><strong>Comportamento</strong><span>Noseriding, velocidade, troca de borda, linha horizontal ou performance vertical.</span></div>
+      <div class="decision-pillar"><strong>Onda</strong><span>Onda lenta pede sustentação; onda rápida pede drive, controle e resposta.</span></div>
+      <div class="decision-pillar"><strong>Surfista</strong><span>Nível evita quilhas exigentes demais; peso ajuda a escolher o tamanho físico.</span></div>
+    </div>
+    <div class="decision-table-wrap">
+      <table class="decision-table">
+        <thead>
+          <tr>
+            <th>Perfil</th>
+            <th>Quilha ideal</th>
+            <th>Prancha</th>
+            <th>Onda</th>
+            <th>Surfista</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Long clássico para bico</td><td>Pé no bico, Portuga ou Lambuja</td><td>Longboard monoquilha, caixa central, 9'2" a 10'0"</td><td>Pequena/lenta para Pé no bico; rápida/cavada para Lambuja</td><td>Todos para Pé no bico; intermediário+ para Portuga/Lambuja</td></tr>
+          <tr><td>Long versátil</td><td>Caio Teixeira ou Jasmim Avelino</td><td>Longboard monoquilha, caixa central, 9'0" a 10'0"</td><td>0,5 a 2 m ou condições variadas</td><td>Todos os níveis</td></tr>
+          <tr><td>Long leve e veloz</td><td>TB Slim Flex</td><td>Longboard leve/moderado, caixa central</td><td>Onda rápida, 0,5 a 2,5 m</td><td>Intermediário ou avançado</td></tr>
+          <tr><td>Fish/biquilha de linha</td><td>Biquilha Speed</td><td>Biquilha 6'0" a 8'0", FCS II ou Futures</td><td>Até 1,5 m, rápida ou lenta</td><td>Todos os níveis</td></tr>
+          <tr><td>Twin performance</td><td>Biquilha Séries</td><td>Biquilha 6'0" a 7'6", rabetas twin/swallow/round pin</td><td>0,5 a 2 m, rápida</td><td>Intermediário ou avançado</td></tr>
+          <tr><td>Mid/long 2+1</td><td>Jogo Nusa ou Jogo Snapper</td><td>Caixa central + copinhos, 6'0" a 10'0"</td><td>Nusa para fluidez; Snapper para performance</td><td>Todos para Nusa; intermediário+ para Snapper</td></tr>
+          <tr><td>Short/mid com drive</td><td>Triquilha AM2</td><td>6'0" a 7'0", copinhos FCS II ou Futures</td><td>1 a 2,5 m, rápida</td><td>Intermediário+, 65 kg ou mais</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="decision-more"><a href="docs/matriz-decisao-quilhas.html">Abrir documentação completa da matriz</a></p>
+  </section>
 </div>
 
 <script>
