@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ferramenta Mágica — Encontre a quilha ideal</title>
+<title>Quilhas Finder - Encontre a quilha ideal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/bold/style.css">
 <style>
   /* ==========================================================
      FERRAMENTA MÁGICA — réplica standalone (HTML + CSS + JS)
@@ -141,116 +146,1673 @@
     .etapa-introducao h1{font-size:1.6rem;}
     .start-etapa{padding:12px 40px;}
   }
+
+  /* ==========================================================
+     REDESIGN 2026 - atelier oceânico
+     ========================================================== */
+  :root{
+    --ink:#f8fbf7;
+    --muted:#aebab2;
+    --deep:#071013;
+    --deep-2:#0d1b1e;
+    --panel:#12262a;
+    --panel-soft:rgba(18,38,42,.72);
+    --foam:#dff8e7;
+    --seafoam:#87d9bd;
+    --sand:#e7c98d;
+    --amber:#d99b42;
+    --line:rgba(223,248,231,.16);
+    --line-strong:rgba(223,248,231,.34);
+    --shadow:0 28px 80px rgba(0,0,0,.42);
+    --radius-pill:999px;
+  }
+  html{background:#071013;}
+  body{
+    min-height:100vh;
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 18% 8%, rgba(135,217,189,.20), transparent 28rem),
+      radial-gradient(circle at 88% 16%, rgba(217,155,66,.18), transparent 24rem),
+      linear-gradient(145deg,#071013 0%,#102226 46%,#070c0e 100%);
+  }
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:-1;
+    background:
+      linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px),
+      linear-gradient(180deg,rgba(255,255,255,.025) 1px,transparent 1px);
+    background-size:64px 64px;
+    mask-image:linear-gradient(to bottom,rgba(0,0,0,.72),transparent 76%);
+  }
+  .fm-wrapper{
+    width:min(1240px,100%);
+    margin:0 auto;
+    padding:38px 28px 48px;
+  }
+  .fm-titulo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin:0 0 12px;
+    color:var(--foam);
+    font-family:"Arial Narrow","Helvetica Neue",Arial,sans-serif;
+    font-size:2.4rem;
+    font-weight:900;
+    line-height:1;
+    letter-spacing:0;
+    text-transform:uppercase;
+  }
+  .fm-titulo::before{
+    content:"";
+    width:38px;
+    height:12px;
+    border:2px solid var(--seafoam);
+    border-left-width:8px;
+    border-radius:999px 42px 42px 999px;
+    transform:skewX(-18deg);
+    box-shadow:0 0 26px rgba(135,217,189,.42);
+  }
+  .fm-sub{
+    max-width:760px;
+    margin:0 0 22px;
+    color:var(--muted);
+    font-size:1rem;
+    line-height:1.65;
+  }
+  .step-rail{
+    display:grid;
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:8px;
+    margin:0 0 18px;
+    padding:8px;
+    border:1px solid var(--line);
+    border-radius:var(--radius-pill);
+    background:rgba(255,255,255,.045);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+  }
+  .step-rail span{
+    min-height:34px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:var(--radius-pill);
+    color:#c7d2cc;
+    font-size:.76rem;
+    font-weight:800;
+    text-transform:uppercase;
+  }
+  .step-rail span.is-active{
+    color:#071013;
+    background:linear-gradient(135deg,var(--foam),var(--seafoam));
+    box-shadow:0 10px 28px rgba(135,217,189,.18);
+  }
+  #dynamic-filters{
+    position:relative;
+    border:1px solid var(--line);
+    border-radius:28px;
+    overflow:hidden;
+    background:linear-gradient(145deg,rgba(255,255,255,.08),rgba(255,255,255,.03));
+    box-shadow:var(--shadow);
+  }
+  .etapa{
+    min-height:640px;
+    background:
+      linear-gradient(135deg,rgba(18,38,42,.96),rgba(9,18,20,.96)),
+      radial-gradient(circle at 94% 10%,rgba(135,217,189,.16),transparent 22rem);
+  }
+  .etapa.ativa{display:flex;}
+  .etapa-introducao{
+    min-height:520px;
+    align-items:flex-start;
+    justify-content:center;
+    border-radius:0;
+    text-align:left;
+    padding:64px;
+    background-image:
+      linear-gradient(90deg,rgba(7,16,19,.94) 0%,rgba(7,16,19,.68) 43%,rgba(7,16,19,.08) 100%),
+      url('https://centerfins.com.br/wp-content/uploads/2024/09/joseph-greve-TII6axq3eo4-unsplash-scaled.jpg');
+    background-size:cover;
+    background-position:center;
+  }
+  .etapa-introducao::before{
+    background:linear-gradient(180deg,transparent 0%,rgba(7,16,19,.18) 48%,rgba(7,16,19,.82) 100%);
+  }
+  .etapa-introducao::after{
+    content:"";
+    position:absolute;
+    left:64px;
+    bottom:50px;
+    width:210px;
+    height:2px;
+    background:linear-gradient(90deg,var(--sand),transparent);
+    z-index:2;
+  }
+  .etapa-introducao h1{
+    max-width:640px;
+    margin:0 0 28px;
+    color:#fff;
+    font-family:"Arial Narrow","Helvetica Neue",Arial,sans-serif;
+    font-size:4rem;
+    font-weight:900;
+    line-height:.94;
+    letter-spacing:0;
+    text-transform:uppercase;
+    text-wrap:balance;
+    text-shadow:0 22px 50px rgba(0,0,0,.5);
+  }
+  .start-etapa,
+  button.next-etapa,
+  button.prev-etapa,
+  .produto-actions a{
+    min-height:46px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    border-radius:var(--radius-pill);
+    font-weight:900;
+    font-size:.9rem;
+    text-transform:uppercase;
+    letter-spacing:0;
+    text-decoration:none;
+  }
+  .start-etapa,
+  button.next-etapa,
+  .produto-actions .adicionar{
+    color:#071013;
+    border:1px solid rgba(231,201,141,.72);
+    background:linear-gradient(135deg,var(--sand),var(--amber));
+    box-shadow:0 16px 34px rgba(217,155,66,.22);
+  }
+  .start-etapa{
+    padding:14px 52px;
+    position:relative;
+    z-index:2;
+  }
+  .start-etapa:hover,
+  button.next-etapa:hover,
+  .produto-actions .adicionar:hover{
+    opacity:1;
+    transform:translateY(-1px);
+    box-shadow:0 20px 42px rgba(217,155,66,.32);
+  }
+  .etapa-filters{
+    width:100%;
+    padding:44px;
+    flex:1;
+  }
+  .etapa-arrow{display:none;}
+  .filter-group{
+    margin:0;
+    padding:24px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .filter-group:first-of-type{padding-top:0;}
+  .filter-group:last-of-type{border-bottom:0;}
+  .filter-group>label{
+    padding:0 0 14px;
+    color:var(--foam);
+    font-size:1rem;
+    line-height:1.35;
+  }
+  .filter-group>label strong{font-weight:850;}
+  .opcoes{gap:10px;}
+  .radio-label p{
+    padding:11px 18px;
+    border:1px solid var(--line-strong);
+    border-radius:var(--radius-pill);
+    background:rgba(255,255,255,.045);
+    color:#dce9e2;
+    font-weight:800;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+  }
+  .radio-label:hover p{
+    border-color:rgba(135,217,189,.72);
+    color:#fff;
+  }
+  .radio-label input:focus-visible + p,
+  .radio-label input:checked + p{
+    color:#071013;
+    border-color:var(--seafoam);
+    background:linear-gradient(135deg,var(--foam),var(--seafoam));
+    box-shadow:0 10px 24px rgba(135,217,189,.18);
+  }
+  .img-label{
+    width:154px;
+    padding:10px;
+    border:1px solid var(--line);
+    border-radius:18px;
+    background:rgba(255,255,255,.045);
+    transition:border-color .2s, transform .2s, background .2s;
+  }
+  .img-label:hover{
+    transform:translateY(-2px);
+    border-color:rgba(135,217,189,.65);
+    background:rgba(255,255,255,.075);
+  }
+  .img-label img{
+    width:100%;
+    height:102px;
+    padding:8px;
+    border:1px solid transparent;
+    border-radius:12px;
+    background:rgba(255,255,255,.84);
+    object-fit:contain;
+  }
+  .img-label img:hover{border-color:transparent;}
+  .img-label input:checked + div img{
+    border-color:var(--seafoam);
+    box-shadow:0 0 0 3px rgba(135,217,189,.24);
+  }
+  .img-label small{
+    margin-top:9px;
+    color:#d6e4dd;
+    font-weight:800;
+    line-height:1.25;
+  }
+  select.filter-select{
+    min-width:260px;
+    min-height:46px;
+    margin:0;
+    padding:10px 44px 10px 16px;
+    border:1px solid var(--line-strong);
+    border-radius:14px;
+    color:var(--foam);
+    background:
+      linear-gradient(45deg,transparent 50%,var(--seafoam) 50%),
+      linear-gradient(135deg,var(--seafoam) 50%,transparent 50%),
+      rgba(255,255,255,.055);
+    background-position:
+      calc(100% - 21px) 19px,
+      calc(100% - 15px) 19px,
+      0 0;
+    background-size:6px 6px,6px 6px,100% 100%;
+    background-repeat:no-repeat;
+    font-size:.95rem;
+    font-weight:800;
+    appearance:none;
+  }
+  select.filter-select option{
+    color:#111;
+    background:#fff;
+  }
+  .buttonsnp{
+    gap:12px;
+    flex-wrap:wrap;
+    padding-top:12px;
+  }
+  button.next-etapa,
+  button.prev-etapa{
+    margin-top:10px;
+    padding:12px 22px;
+    transition:transform .2s, box-shadow .2s, border-color .2s;
+  }
+  button.prev-etapa,
+  .produto-actions .ver-produto{
+    color:var(--foam);
+    border:1px solid var(--line-strong);
+    background:rgba(255,255,255,.055);
+  }
+  button.prev-etapa:hover,
+  .produto-actions .ver-produto:hover{
+    border-color:var(--seafoam);
+    transform:translateY(-1px);
+  }
+  #filtered-products{padding:44px 44px 0;}
+  .produto-item{
+    justify-content:space-between;
+    gap:40px;
+    margin-bottom:24px;
+    padding:34px;
+    border:1px solid var(--line);
+    border-radius:26px;
+    background:
+      radial-gradient(circle at 22% 24%,rgba(135,217,189,.18),transparent 18rem),
+      rgba(255,255,255,.055);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+  }
+  .produto-item img.produto-foto{
+    width:42%;
+    max-width:440px;
+    max-height:430px;
+    padding:24px;
+    border-radius:24px;
+    background:linear-gradient(145deg,rgba(255,255,255,.94),rgba(223,248,231,.78));
+    object-fit:contain;
+    box-shadow:0 24px 60px rgba(0,0,0,.28);
+  }
+  .div-produto{
+    width:52%;
+  }
+  .produto-header h2{
+    margin:0 0 12px;
+    color:var(--foam);
+    font-family:"Arial Narrow","Helvetica Neue",Arial,sans-serif;
+    font-size:3.1rem;
+    line-height:1;
+    letter-spacing:0;
+    text-transform:uppercase;
+  }
+  .produto-desc{
+    margin:8px 0 22px;
+    color:#d5e2dc;
+    font-size:1.05rem;
+    line-height:1.6;
+  }
+  .produto-body span.meta{
+    display:inline-block;
+    margin:0 14px 8px 0;
+    color:var(--muted);
+    font-size:.9rem;
+  }
+  .produto-preco{
+    margin:12px 0 24px;
+    color:var(--sand);
+    font-size:2.1rem;
+  }
+  .match-badge{
+    width:max-content;
+    margin-bottom:14px;
+    border-color:rgba(135,217,189,.5);
+    color:#071013;
+    background:linear-gradient(135deg,var(--foam),var(--seafoam));
+    font-size:.74rem;
+    font-weight:900;
+    text-transform:uppercase;
+  }
+  .other-products{
+    gap:14px;
+    padding:0 44px 36px;
+  }
+  .produto-item-other{
+    border:1px solid var(--line);
+    border-radius:22px;
+    padding:18px;
+    background:rgba(255,255,255,.052);
+  }
+  .produto-item-other img{
+    height:210px;
+    padding:14px;
+    border-radius:16px;
+    background:rgba(255,255,255,.9);
+  }
+  .produto-item-other h3{
+    color:var(--foam);
+    font-family:"Arial Narrow","Helvetica Neue",Arial,sans-serif;
+    font-size:1.55rem;
+    text-transform:uppercase;
+    letter-spacing:0;
+  }
+  .produto-item-other .produto-preco{color:var(--sand);}
+  .sem-produto{
+    color:var(--muted);
+    padding:56px;
+  }
+  a:focus-visible,
+  button:focus-visible,
+  select:focus-visible{
+    outline:3px solid rgba(135,217,189,.85);
+    outline-offset:3px;
+  }
+  @media (max-width:900px){
+    .fm-wrapper{padding:26px 16px 34px;}
+    .fm-titulo{font-size:2rem;}
+    .step-rail{
+      grid-template-columns:1fr 1fr;
+      border-radius:22px;
+    }
+    .step-rail span{justify-content:flex-start;padding:0 14px;}
+    .etapa{min-height:590px;}
+    .etapa-introducao{
+      min-height:620px;
+      padding:34px 24px;
+      background-image:
+        linear-gradient(180deg,rgba(7,16,19,.64),rgba(7,16,19,.9)),
+        url('https://centerfins.com.br/wp-content/uploads/2024/09/joseph-greve-TII6axq3eo4-unsplash-scaled.jpg');
+    }
+    .etapa-introducao::after{left:24px;bottom:30px;width:150px;}
+    .etapa-introducao h1{
+      max-width:100%;
+      font-size:3.1rem;
+      line-height:1;
+    }
+    .etapa-filters,
+    #filtered-products{padding:26px 20px 0;}
+    .filter-group{padding:20px 0;}
+    .img-label{width:138px;}
+    select.filter-select{width:100%;min-width:0;}
+    .produto-item{
+      flex-direction:column;
+      padding:22px;
+      gap:22px;
+    }
+    .produto-item img.produto-foto{
+      width:100%;
+      max-width:none;
+    }
+    .div-produto{width:100%;}
+    .produto-header h2{
+      text-align:left;
+      font-size:2.25rem;
+    }
+    .other-products.visivel{flex-direction:column;}
+    .other-products{padding:0 20px 24px;}
+  }
+  @media (max-width:520px){
+    .fm-titulo{font-size:1.7rem;}
+    .fm-sub{font-size:.96rem;}
+    .step-rail{display:none;}
+    #dynamic-filters{border-radius:22px;}
+    .etapa-introducao{min-height:560px;}
+    .etapa-introducao h1{font-size:2.5rem;}
+    .start-etapa{width:100%;padding:13px 20px;}
+    .radio-label p{width:100%;text-align:center;}
+    .opcoes{display:grid;grid-template-columns:1fr;align-items:stretch;}
+    .img-label{width:100%;}
+    .img-label img{height:118px;}
+    .produto-actions a,
+    button.next-etapa,
+    button.prev-etapa{width:100%;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{
+      scroll-behavior:auto!important;
+      animation-duration:.01ms!important;
+      transition-duration:.01ms!important;
+    }
+  }
+
+  /* ==========================================================
+     REBUILD - referência Quilhas Finder
+     ========================================================== */
+  :root{
+    --q-bg:#06131d;
+    --q-bg-deep:#020b11;
+    --q-panel:rgba(5,18,28,.88);
+    --q-panel-soft:rgba(8,25,36,.72);
+    --q-cream:#f0eee7;
+    --q-muted:#aeb9bc;
+    --q-mint:#a9d9cb;
+    --q-mint-soft:#d7efe7;
+    --q-gold:#e1a84d;
+    --q-gold-light:#ffc769;
+    --q-line:rgba(205,225,224,.27);
+    --q-line-soft:rgba(205,225,224,.14);
+    --q-benefit-h:116px;
+  }
+  html{
+    min-width:320px;
+    background:var(--q-bg-deep);
+  }
+  body{
+    min-width:320px;
+    min-height:100vh;
+    margin:0;
+    position:relative;
+    isolation:isolate;
+    overflow-x:hidden;
+    color:var(--q-cream);
+    background:var(--q-bg);
+    font-family:"Manrope",Arial,sans-serif;
+  }
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0 0 var(--q-benefit-h);
+    z-index:-2;
+    pointer-events:none;
+    background:url("assets/quilhas-hero-sunset.png") center 52% / cover no-repeat;
+    mask-image:none;
+  }
+  body::after{
+    content:"";
+    position:fixed;
+    inset:0 0 var(--q-benefit-h);
+    z-index:-1;
+    pointer-events:none;
+    background:
+      linear-gradient(90deg,
+        rgba(2,10,16,.05) 0%,
+        rgba(2,10,16,.10) 24%,
+        rgba(2,10,16,.42) 43%,
+        rgba(3,13,21,.84) 63%,
+        rgba(3,13,21,.98) 100%),
+      linear-gradient(180deg,
+        rgba(3,12,19,.46) 0%,
+        rgba(3,12,19,.04) 39%,
+        rgba(3,12,19,.66) 100%);
+  }
+  button,
+  select{
+    font:inherit;
+  }
+  .finder-app{
+    min-height:calc(100svh - var(--q-benefit-h));
+    display:grid;
+    grid-template-columns:minmax(440px,36.8%) minmax(720px,63.2%);
+    position:relative;
+    z-index:2;
+  }
+  .hero-panel{
+    min-height:calc(100svh - var(--q-benefit-h));
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding:48px 32px 52px 68px;
+  }
+  .brand-lockup{
+    display:flex;
+    align-items:center;
+    gap:17px;
+    width:max-content;
+  }
+  .brand-mark{
+    width:61px;
+    height:61px;
+    display:block;
+    border-radius:50%;
+    object-fit:cover;
+    box-shadow:0 12px 28px rgba(0,0,0,.28);
+  }
+  .brand-type{
+    display:flex;
+    flex-direction:column;
+    line-height:1;
+  }
+  .brand-type strong{
+    color:var(--q-cream);
+    font-family:"Bebas Neue",sans-serif;
+    font-size:2.25rem;
+    font-weight:400;
+    letter-spacing:.24em;
+  }
+  .brand-type span{
+    margin-top:3px;
+    color:var(--q-gold-light);
+    font-size:.82rem;
+    font-weight:800;
+    letter-spacing:.62em;
+  }
+  .hero-copy{
+    width:min(410px,100%);
+    margin:56px 0 auto;
+    padding-top:42px;
+  }
+  .hero-copy h1{
+    margin:0;
+    color:var(--q-cream);
+    font-family:"Bebas Neue",sans-serif;
+    font-size:clamp(5.4rem,6.6vw,6.85rem);
+    font-weight:400;
+    line-height:.86;
+    letter-spacing:.01em;
+    text-transform:uppercase;
+    text-shadow:0 12px 44px rgba(0,0,0,.48);
+  }
+  .hero-rule{
+    width:145px;
+    height:1px;
+    margin:25px 0 18px;
+    background:var(--q-gold);
+  }
+  .hero-copy p{
+    margin:0;
+    color:var(--q-mint);
+    font-size:.92rem;
+    font-weight:700;
+    line-height:1.75;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+  }
+  .hero-wave{
+    display:block;
+    margin-top:18px;
+    color:var(--q-gold-light);
+    font-size:3.4rem;
+    line-height:1;
+  }
+  .wizard-shell{
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    gap:28px;
+    padding:58px 70px 52px 0;
+  }
+  .step-rail{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:0;
+    width:100%;
+    margin:0;
+    padding:0 8px;
+    overflow:visible;
+    border:0;
+    border-radius:0;
+    background:transparent;
+    box-shadow:none;
+  }
+  .step-rail span{
+    min-height:82px;
+    display:grid;
+    grid-template-rows:48px auto;
+    place-items:start center;
+    position:relative;
+    padding:0;
+    border-radius:0;
+    color:var(--q-cream);
+    font-size:.88rem;
+    font-weight:600;
+    text-transform:uppercase;
+  }
+  .step-rail span::after{
+    content:"";
+    position:absolute;
+    top:23px;
+    left:calc(50% + 30px);
+    width:calc(100% - 60px);
+    height:1px;
+    background:rgba(219,230,228,.34);
+  }
+  .step-rail span:last-child::after{
+    display:none;
+  }
+  .step-rail b{
+    width:46px;
+    height:46px;
+    display:grid;
+    place-items:center;
+    position:relative;
+    z-index:1;
+    border:1px solid rgba(219,230,228,.48);
+    border-radius:50%;
+    background:rgba(3,15,23,.68);
+    color:var(--q-cream);
+    font-size:1rem;
+    font-weight:500;
+    box-shadow:0 8px 25px rgba(0,0,0,.18);
+  }
+  .step-rail em{
+    margin-top:12px;
+    color:inherit;
+    font-style:normal;
+    letter-spacing:.02em;
+  }
+  .step-rail span.is-active{
+    color:var(--q-mint);
+    background:transparent;
+    box-shadow:none;
+  }
+  .step-rail span.is-active b{
+    color:var(--q-mint-soft);
+    border-color:var(--q-mint);
+    background:rgba(111,163,151,.22);
+    box-shadow:0 0 0 5px rgba(169,217,203,.06),0 0 26px rgba(169,217,203,.18);
+  }
+  .step-rail span.is-active::after{
+    background:linear-gradient(90deg,var(--q-mint),rgba(219,230,228,.28));
+  }
+  #dynamic-filters{
+    width:100%;
+    min-height:590px;
+    position:relative;
+    overflow:hidden;
+    border:1px solid var(--q-line);
+    border-radius:32px;
+    background:
+      linear-gradient(140deg,rgba(11,30,42,.9),rgba(3,14,22,.91)),
+      var(--q-panel);
+    box-shadow:0 38px 90px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.025);
+    backdrop-filter:blur(18px);
+  }
+  .etapa{
+    min-height:590px;
+    background:transparent;
+    animation:stageReveal .34s ease both;
+  }
+  .etapa.ativa{
+    display:block;
+  }
+  @keyframes stageReveal{
+    from{opacity:0;transform:translateY(8px)}
+    to{opacity:1;transform:none}
+  }
+  .etapa-filters{
+    min-height:590px;
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    padding:36px 54px 0;
+  }
+  .stage-header,
+  .result-header{
+    display:grid;
+    grid-template-columns:74px minmax(0,1fr) minmax(180px,280px);
+    gap:24px;
+    align-items:center;
+    padding-bottom:28px;
+    border-bottom:1px solid var(--q-line);
+  }
+  .stage-icon{
+    width:64px;
+    height:64px;
+    display:grid;
+    place-items:center;
+    border:1px solid rgba(169,217,203,.72);
+    border-radius:50%;
+    color:var(--q-mint);
+    background:rgba(169,217,203,.035);
+  }
+  .stage-icon i{
+    font-size:2.25rem;
+  }
+  .stage-copy span{
+    display:block;
+    margin-bottom:3px;
+    color:var(--q-gold-light);
+    font-size:.67rem;
+    font-weight:800;
+    letter-spacing:.19em;
+    text-transform:uppercase;
+  }
+  .stage-copy h2{
+    margin:0;
+    color:var(--q-mint);
+    font-family:"Bebas Neue",sans-serif;
+    font-size:3.25rem;
+    font-weight:400;
+    line-height:.95;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  .stage-copy p{
+    max-width:520px;
+    margin:8px 0 0;
+    color:#c3ccce;
+    font-size:.83rem;
+    line-height:1.55;
+  }
+  .stage-art{
+    min-width:0;
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:22px;
+    color:var(--q-gold);
+  }
+  .stage-art i{
+    font-size:2.45rem;
+    font-weight:300;
+  }
+  .stage-art i:nth-child(2){
+    color:var(--q-mint);
+  }
+  .fields-grid{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    column-gap:34px;
+    align-content:start;
+    padding:14px 0 18px;
+    flex:1;
+  }
+  .field-wide{
+    grid-column:1 / -1;
+  }
+  .filter-group{
+    min-width:0;
+    margin:0;
+    padding:17px 0;
+    border-bottom:1px solid var(--q-line-soft);
+  }
+  .filter-group>label{
+    display:block;
+    padding:0 0 12px;
+    color:#e3e7e4;
+    font-size:.68rem;
+    line-height:1.2;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+  }
+  .filter-group>label strong{
+    font-weight:800;
+  }
+  .opcoes{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .radio-label{
+    min-width:0;
+  }
+  .radio-label p{
+    min-height:42px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    margin:0;
+    padding:9px 17px;
+    border:1px solid rgba(224,233,232,.38);
+    border-radius:999px;
+    color:#e3e8e5;
+    background:rgba(255,255,255,.025);
+    font-size:.78rem;
+    font-weight:600;
+    line-height:1.25;
+    text-align:center;
+    box-shadow:none;
+  }
+  .radio-label:hover p{
+    border-color:var(--q-mint);
+    color:#fff;
+    transform:translateY(-1px);
+  }
+  .radio-label input:focus-visible + p,
+  .radio-label input:checked + p{
+    color:#07151d;
+    border-color:var(--q-mint);
+    background:var(--q-mint-soft);
+    box-shadow:0 10px 26px rgba(111,176,158,.17);
+  }
+  select.filter-select{
+    width:100%;
+    min-width:0;
+    min-height:46px;
+    margin:0;
+    padding:10px 45px 10px 17px;
+    border:1px solid rgba(224,233,232,.38);
+    border-radius:999px;
+    color:#edf1ee;
+    background-color:rgba(255,255,255,.025);
+    background-image:
+      linear-gradient(45deg,transparent 50%,var(--q-mint) 50%),
+      linear-gradient(135deg,var(--q-mint) 50%,transparent 50%);
+    background-position:calc(100% - 20px) 20px,calc(100% - 14px) 20px;
+    background-size:6px 6px,6px 6px;
+    background-repeat:no-repeat;
+    font-size:.78rem;
+    font-weight:600;
+    appearance:none;
+  }
+  select.filter-select:hover,
+  select.filter-select:focus{
+    border-color:var(--q-mint);
+  }
+  select.filter-select option{
+    color:#0b1720;
+    background:#edf1ee;
+  }
+  .image-options{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(102px,1fr));
+    align-items:stretch;
+    gap:9px;
+  }
+  .img-label{
+    width:auto;
+    min-width:0;
+    padding:7px;
+    border:1px solid rgba(224,233,232,.18);
+    border-radius:14px;
+    background:rgba(255,255,255,.025);
+  }
+  .img-label:hover{
+    border-color:rgba(169,217,203,.7);
+    background:rgba(169,217,203,.055);
+    transform:translateY(-2px);
+  }
+  .img-label img{
+    width:100%;
+    height:82px;
+    display:block;
+    padding:7px;
+    border:1px solid transparent;
+    border-radius:9px;
+    background:rgba(239,242,238,.94);
+    object-fit:contain;
+  }
+  .img-label small{
+    min-height:30px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:6px 2px 0;
+    color:#d9e0dd;
+    font-size:.67rem;
+    font-weight:700;
+    line-height:1.25;
+    text-align:center;
+  }
+  .img-label input:checked + div img{
+    border-color:var(--q-mint);
+    box-shadow:0 0 0 2px rgba(169,217,203,.27);
+  }
+  .img-label:has(input:checked){
+    border-color:var(--q-mint);
+    background:rgba(169,217,203,.08);
+  }
+  .stage-footer{
+    min-height:112px;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    align-items:center;
+    gap:28px;
+    margin:auto -54px 0;
+    padding:22px 54px;
+    border-top:1px solid var(--q-line);
+    background:rgba(2,12,19,.48);
+  }
+  .detail-note{
+    min-width:0;
+    display:flex;
+    align-items:center;
+    gap:17px;
+  }
+  .detail-note>i{
+    color:var(--q-gold);
+    font-size:2.35rem;
+  }
+  .detail-note div{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+  }
+  .detail-note strong{
+    color:#e8e8e2;
+    font-size:.66rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+  }
+  .detail-note span{
+    color:#aeb9bc;
+    font-size:.75rem;
+    line-height:1.45;
+  }
+  .buttonsnp{
+    width:auto;
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:10px;
+    padding:0;
+  }
+  button.next-etapa,
+  button.prev-etapa{
+    min-height:54px;
+    margin:0;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    padding:12px 24px;
+    border-radius:999px;
+    font-size:.76rem;
+    font-weight:800;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    transition:transform .2s,border-color .2s,background .2s,box-shadow .2s;
+  }
+  button.next-etapa{
+    min-width:310px;
+    color:#06131d;
+    border:1px solid #f3be61;
+    background:linear-gradient(135deg,#f4b957,#ffcc76);
+    box-shadow:0 16px 36px rgba(226,160,65,.2),inset 0 1px 0 rgba(255,255,255,.38);
+  }
+  button.next-etapa:hover{
+    opacity:1;
+    transform:translateY(-2px);
+    box-shadow:0 20px 42px rgba(226,160,65,.28),inset 0 1px 0 rgba(255,255,255,.42);
+  }
+  button.prev-etapa{
+    color:#e7ece8;
+    border:1px solid rgba(224,233,232,.38);
+    background:rgba(255,255,255,.025);
+  }
+  button.prev-etapa:hover{
+    border-color:var(--q-mint);
+    transform:translateY(-1px);
+  }
+  button i{
+    font-size:1.12rem;
+  }
+  .resultado-etapa{
+    padding:34px 42px 28px;
+  }
+  .result-header{
+    grid-template-columns:74px minmax(0,1fr);
+    padding:0 12px 28px;
+  }
+  #filtered-products{
+    padding:24px 0 0;
+  }
+  .produto-item{
+    display:grid;
+    grid-template-columns:minmax(240px,38%) minmax(0,1fr);
+    justify-content:stretch;
+    align-items:center;
+    gap:32px;
+    margin:0 0 22px;
+    padding:24px;
+    border:1px solid var(--q-line-soft);
+    border-radius:22px;
+    background:rgba(255,255,255,.025);
+    box-shadow:none;
+  }
+  .produto-item img.produto-foto{
+    width:100%;
+    max-width:none;
+    max-height:360px;
+    padding:20px;
+    border-radius:16px;
+    background:rgba(239,242,238,.94);
+    box-shadow:0 18px 50px rgba(0,0,0,.24);
+  }
+  .div-produto{
+    width:100%;
+  }
+  .produto-header h2{
+    margin:0 0 10px;
+    color:var(--q-mint);
+    font-family:"Bebas Neue",sans-serif;
+    font-size:3.1rem;
+    font-weight:400;
+    line-height:.95;
+    letter-spacing:.05em;
+  }
+  .produto-desc{
+    margin:8px 0 18px;
+    color:#c4cdcf;
+    font-size:.86rem;
+    font-style:normal;
+    line-height:1.55;
+  }
+  .produto-body span.meta{
+    color:var(--q-muted);
+    font-size:.75rem;
+  }
+  .produto-preco{
+    margin:12px 0 20px;
+    color:var(--q-gold-light);
+    font-size:1.8rem;
+  }
+  .match-badge{
+    margin-bottom:12px;
+    color:#07151d;
+    border-color:var(--q-mint);
+    background:var(--q-mint-soft);
+    font-size:.63rem;
+    font-weight:800;
+    letter-spacing:.12em;
+  }
+  .produto-actions a{
+    min-height:44px;
+    padding:10px 18px;
+    border-radius:999px;
+    font-size:.7rem;
+    font-weight:800;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  .produto-actions .ver-produto{
+    color:var(--q-cream);
+    border:1px solid var(--q-line);
+    background:transparent;
+  }
+  .produto-actions .adicionar{
+    color:#06131d;
+    border:1px solid var(--q-gold-light);
+    background:var(--q-gold-light);
+    box-shadow:none;
+  }
+  .other-products{
+    padding:0;
+    gap:12px;
+  }
+  .produto-item-other{
+    padding:14px;
+    border-color:var(--q-line-soft);
+    border-radius:16px;
+    background:rgba(255,255,255,.025);
+  }
+  .produto-item-other img{
+    height:170px;
+    border-radius:11px;
+  }
+  .produto-item-other h3{
+    color:var(--q-mint);
+    font-family:"Bebas Neue",sans-serif;
+    font-size:1.45rem;
+    font-weight:400;
+    letter-spacing:.04em;
+  }
+  .produto-item-other .produto-preco{
+    color:var(--q-gold-light);
+  }
+  .sem-produto{
+    color:var(--q-muted);
+  }
+  .result-footer{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    padding-top:22px;
+    border-top:1px solid var(--q-line-soft);
+  }
+  .result-footer .next-etapa{
+    min-width:220px;
+  }
+  .benefit-strip{
+    min-height:var(--q-benefit-h);
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    position:relative;
+    z-index:3;
+    padding:0 66px;
+    border-top:1px solid rgba(218,230,229,.18);
+    background:rgba(2,13,21,.97);
+    box-shadow:0 -20px 50px rgba(0,0,0,.18);
+  }
+  .benefit-strip>div{
+    min-width:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:16px;
+    position:relative;
+    padding:22px 26px;
+  }
+  .benefit-strip>div:not(:last-child)::after{
+    content:"";
+    position:absolute;
+    top:30%;
+    right:0;
+    width:1px;
+    height:40%;
+    background:rgba(218,230,229,.24);
+  }
+  .benefit-strip i{
+    flex:none;
+    color:var(--q-gold);
+    font-size:2.3rem;
+  }
+  .benefit-strip>div:nth-child(odd) i{
+    color:var(--q-mint);
+  }
+  .benefit-strip p{
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    margin:0;
+  }
+  .benefit-strip strong{
+    color:#e8ece8;
+    font-size:.66rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+  }
+  .benefit-strip span{
+    color:#8e9b9f;
+    font-size:.7rem;
+    line-height:1.4;
+  }
+  a:focus-visible,
+  button:focus-visible,
+  select:focus-visible,
+  .radio-label input:focus-visible + p{
+    outline:2px solid var(--q-mint);
+    outline-offset:3px;
+  }
+  @media (max-width:1380px){
+    .finder-app{
+      grid-template-columns:minmax(360px,32%) minmax(680px,68%);
+    }
+    .hero-panel{
+      padding-left:46px;
+    }
+    .hero-copy h1{
+      font-size:clamp(5rem,7vw,6.7rem);
+    }
+    .wizard-shell{
+      padding-right:34px;
+    }
+    .etapa-filters{
+      padding-left:38px;
+      padding-right:38px;
+    }
+    .stage-footer{
+      margin-left:-38px;
+      margin-right:-38px;
+      padding-left:38px;
+      padding-right:38px;
+    }
+    .radio-label p{
+      padding-left:14px;
+      padding-right:14px;
+    }
+    button.next-etapa{
+      min-width:250px;
+    }
+  }
+  @media (max-width:1080px){
+    :root{--q-benefit-h:0px;}
+    body::before,
+    body::after{
+      inset:0;
+    }
+    .finder-app{
+      grid-template-columns:1fr;
+    }
+    .hero-panel{
+      min-height:520px;
+      padding:36px 28px 46px;
+    }
+    .hero-copy{
+      margin-top:80px;
+      padding-top:0;
+    }
+    .hero-copy h1{
+      max-width:480px;
+      font-size:6.2rem;
+    }
+    .wizard-shell{
+      padding:34px 28px 48px;
+      background:rgba(3,13,21,.88);
+    }
+    .step-rail{
+      max-width:900px;
+      margin:0 auto;
+    }
+    #dynamic-filters{
+      max-width:900px;
+      margin:0 auto;
+    }
+    .benefit-strip{
+      min-height:112px;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      padding:0 24px;
+    }
+    .benefit-strip>div:nth-child(2)::after{
+      display:none;
+    }
+  }
+  @media (max-width:720px){
+    .hero-panel{
+      min-height:470px;
+      padding:28px 20px 36px;
+    }
+    .brand-mark{
+      width:52px;
+      height:52px;
+    }
+    .brand-type strong{
+      font-size:1.85rem;
+    }
+    .brand-type span{
+      font-size:.67rem;
+    }
+    .hero-copy{
+      margin-top:65px;
+    }
+    .hero-copy h1{
+      font-size:4.7rem;
+    }
+    .wizard-shell{
+      padding:26px 14px 34px;
+      gap:20px;
+    }
+    .step-rail{
+      padding:0;
+    }
+    .step-rail span{
+      min-height:70px;
+      grid-template-rows:38px auto;
+      font-size:.64rem;
+    }
+    .step-rail b{
+      width:38px;
+      height:38px;
+      font-size:.82rem;
+    }
+    .step-rail span::after{
+      top:19px;
+      left:calc(50% + 24px);
+      width:calc(100% - 48px);
+    }
+    .step-rail em{
+      margin-top:9px;
+    }
+    #dynamic-filters{
+      min-height:0;
+      border-radius:22px;
+    }
+    .etapa,
+    .etapa-filters{
+      min-height:0;
+    }
+    .etapa-filters{
+      padding:25px 18px 0;
+    }
+    .stage-header,
+    .result-header{
+      grid-template-columns:52px minmax(0,1fr);
+      gap:15px;
+      padding-bottom:22px;
+    }
+    .stage-icon{
+      width:48px;
+      height:48px;
+    }
+    .stage-icon i{
+      font-size:1.7rem;
+    }
+    .stage-copy h2{
+      font-size:2.6rem;
+    }
+    .stage-copy p{
+      font-size:.75rem;
+    }
+    .stage-art{
+      display:none;
+    }
+    .fields-grid{
+      grid-template-columns:1fr;
+      padding-top:10px;
+    }
+    .field-wide{
+      grid-column:auto;
+    }
+    .filter-group{
+      padding:15px 0;
+    }
+    .opcoes{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+    }
+    .radio-label p{
+      width:100%;
+      min-height:44px;
+    }
+    .image-options{
+      grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+    .img-label{
+      width:auto;
+    }
+    .stage-footer{
+      grid-template-columns:1fr;
+      gap:18px;
+      margin:12px -18px 0;
+      padding:20px 18px;
+    }
+    .detail-note{
+      display:none;
+    }
+    .buttonsnp{
+      width:100%;
+      display:grid;
+      grid-template-columns:1fr;
+    }
+    button.next-etapa,
+    button.prev-etapa{
+      width:100%;
+      min-width:0;
+    }
+    .resultado-etapa{
+      padding:24px 18px;
+    }
+    .produto-item{
+      grid-template-columns:1fr;
+      padding:17px;
+    }
+    .produto-header h2{
+      font-size:2.5rem;
+      text-align:left;
+    }
+    .result-footer{
+      display:grid;
+      grid-template-columns:1fr;
+    }
+    .other-products.visivel{
+      flex-direction:column;
+    }
+    .benefit-strip{
+      grid-template-columns:1fr;
+      padding:0 20px;
+    }
+    .benefit-strip>div{
+      justify-content:flex-start;
+      padding:20px 6px;
+      border-bottom:1px solid rgba(218,230,229,.13);
+    }
+    .benefit-strip>div::after{
+      display:none;
+    }
+  }
+  @media (max-width:430px){
+    .hero-panel{
+      min-height:430px;
+    }
+    .hero-copy h1{
+      font-size:4rem;
+    }
+    .hero-copy p{
+      font-size:.75rem;
+    }
+    .step-rail em{
+      font-size:.58rem;
+    }
+    .opcoes{
+      grid-template-columns:1fr;
+    }
+  }
 </style>
 </head>
 <body>
-<div class="fm-wrapper">
-  <h2 class="fm-titulo">Ferramenta Mágica</h2>
-  <p class="fm-sub">Explore nossa ferramenta para descobrir a quilha ideal para o seu momento de surf.
-  Lembre-se: cada surfista é único, e a escolha pode variar com a sua experiência e preferências.</p>
-
-  <form id="dynamic-filters" onsubmit="return false;">
-
-    <!-- ===== INTRO ===== -->
-    <div class="etapa etapa-introducao ativa" data-etapa="0">
-      <h1>Encontre a quilha ideal para sua prancha</h1>
-      <button type="button" class="start-etapa">Começar</button>
-    </div>
-
-    <!-- ===== ETAPA 1 — Surfista ===== -->
-    <div class="etapa" data-etapa="1">
-      <div class="etapa-filters">
-        <img class="etapa-arrow" src="https://centerfins.com.br/wp-content/uploads/2024/09/arrow01.svg" alt="Etapa 1">
-        <div class="filter-group" data-field="prancha">
-          <label><strong>Qual seu tipo de prancha?:</strong></label>
-          <div class="opcoes" id="op-prancha"></div>
-        </div>
-        <div class="filter-group" data-field="modalidade">
-          <label><strong>Qual a categoria da sua prancha?:</strong></label>
-          <div class="opcoes" id="op-modalidade"></div>
-        </div>
-        <div class="filter-group" data-field="nivel_de_habilidade">
-          <label><strong>Qual seu nível de habilidade?:</strong></label>
-          <div class="opcoes" id="op-nivel"></div>
-        </div>
-        <div class="filter-group" data-field="sexo">
-          <label><strong>Qual seu sexo?:</strong></label>
-          <div class="opcoes" id="op-sexo"></div>
-        </div>
-        <div class="filter-group" data-field="altura_do_surfista">
-          <label><strong>Qual sua altura?:</strong></label>
-          <select name="altura_do_surfista" class="filter-select" id="sel-altura"></select>
-        </div>
-        <div class="filter-group" data-field="peso_do_surfista">
-          <label><strong>Qual seu peso?:</strong></label>
-          <select name="peso_do_surfista" class="filter-select" id="sel-peso"></select>
-        </div>
-        <button type="button" class="next-etapa">Próxima Etapa</button>
+<main class="finder-app">
+  <aside class="hero-panel">
+    <div class="brand-lockup" aria-label="Quilhas Finder">
+      <img src="assets/quilhas-fin-mark.png" alt="" class="brand-mark">
+      <div class="brand-type">
+        <strong>QUILHAS</strong>
+        <span>FINDER</span>
       </div>
     </div>
 
-    <!-- ===== ETAPA 2 — Prancha ===== -->
-    <div class="etapa" data-etapa="2">
-      <div class="etapa-filters">
-        <img class="etapa-arrow" src="https://centerfins.com.br/wp-content/uploads/2024/09/arrow02.svg" alt="Etapa 2">
-        <div class="filter-group" data-field="objetivo">
-          <label><strong>Qual seu objetivo?:</strong></label>
-          <div class="opcoes" id="op-objetivo"></div>
-        </div>
-        <div class="filter-group" data-field="tamanho_da_prancha">
-          <label><strong>Qual tamanho da sua prancha?:</strong></label>
-          <select name="tamanho_da_prancha" class="filter-select" id="sel-tamprancha"></select>
-        </div>
-        <div class="filter-group" data-field="peso_da_prancha">
-          <label><strong>Qual peso da sua prancha?:</strong></label>
-          <select name="peso_da_prancha" class="filter-select" id="sel-pesoprancha"></select>
-        </div>
-        <div class="filter-group" data-field="rabeta">
-          <label><strong>Qual a rabeta da sua prancha?:</strong></label>
-          <div class="opcoes" id="op-rabeta"></div>
-        </div>
-        <div class="filter-group" data-field="tipo_de_encaixe">
-          <label><strong>Qual tipo de encaixe da prancha?:</strong></label>
-          <div class="opcoes" id="op-encaixe"></div>
-        </div>
-        <div class="buttonsnp">
-          <button type="button" class="prev-etapa">Voltar</button>
-          <button type="button" class="next-etapa">Próxima Etapa</button>
+    <div class="hero-copy">
+      <h1>Ferramenta<br>Mágica</h1>
+      <div class="hero-rule"></div>
+      <p>Encontre a quilha ideal<br>para sua prancha</p>
+      <i class="ph ph-wave-sine hero-wave" aria-hidden="true"></i>
+    </div>
+  </aside>
+
+  <section class="wizard-shell" aria-label="Seletor de quilhas">
+    <nav class="step-rail" aria-label="Etapas da recomendação">
+      <span data-progress-step="1"><b>1</b><em>Surfista</em></span>
+      <span data-progress-step="2"><b>2</b><em>Prancha</em></span>
+      <span data-progress-step="3"><b>3</b><em>Onda</em></span>
+      <span data-progress-step="4"><b>4</b><em>Resultado</em></span>
+    </nav>
+
+    <form id="dynamic-filters" onsubmit="return false;">
+      <!-- ===== ETAPA 1 — Surfista ===== -->
+      <div class="etapa ativa" data-etapa="1">
+        <div class="etapa-filters">
+          <header class="stage-header">
+            <div class="stage-icon"><i class="ph ph-user-circle" aria-hidden="true"></i></div>
+            <div class="stage-copy">
+              <span>01 / Perfil</span>
+              <h2>Surfista</h2>
+              <p>Conte um pouco sobre você para encontrarmos a quilha ideal para o seu estilo de surf.</p>
+            </div>
+            <div class="stage-art" aria-hidden="true">
+              <i class="ph ph-sun-horizon"></i>
+              <i class="ph ph-wave-sine"></i>
+              <i class="ph ph-mountains"></i>
+            </div>
+          </header>
+
+          <div class="fields-grid surfista-grid">
+            <div class="filter-group" data-field="nivel_de_habilidade">
+              <label><strong>Nível de surf</strong></label>
+              <div class="opcoes" id="op-nivel"></div>
+            </div>
+            <div class="filter-group" data-field="sexo">
+              <label><strong>Sexo</strong></label>
+              <div class="opcoes" id="op-sexo"></div>
+            </div>
+            <div class="filter-group" data-field="peso_do_surfista">
+              <label><strong>Peso</strong></label>
+              <select name="peso_do_surfista" class="filter-select" id="sel-peso"></select>
+            </div>
+            <div class="filter-group" data-field="objetivo">
+              <label><strong>Objetivo principal</strong></label>
+              <select name="objetivo" class="filter-select" id="sel-objetivo"></select>
+            </div>
+          </div>
+
+          <footer class="stage-footer">
+            <div class="detail-note">
+              <i class="ph ph-compass" aria-hidden="true"></i>
+              <div><strong>Cada detalhe importa</strong><span>A combinação certa transforma sua experiência no mar.</span></div>
+            </div>
+            <div class="buttonsnp">
+              <button type="button" class="next-etapa">Começar <i class="ph ph-arrow-right" aria-hidden="true"></i></button>
+            </div>
+          </footer>
         </div>
       </div>
-    </div>
 
-    <!-- ===== ETAPA 3 — Onda ===== -->
-    <div class="etapa" data-etapa="3">
-      <div class="etapa-filters">
-        <img class="etapa-arrow" src="https://centerfins.com.br/wp-content/uploads/2024/09/arrow03.svg" alt="Etapa 3">
-        <div class="filter-group" data-field="tamanho_de_onda">
-          <label><strong>Qual tamanho de onda você costuma pegar?:</strong></label>
-          <select name="tamanho_de_onda" class="filter-select" id="sel-onda"></select>
-        </div>
-        <div class="filter-group" data-field="tipo_de_onda">
-          <label><strong>Qual o tipo de onda você surfa?:</strong></label>
-          <select name="tipo_de_onda" class="filter-select" id="sel-tipoonda"></select>
-        </div>
-        <div class="buttonsnp">
-          <button type="button" class="prev-etapa">Voltar</button>
-          <button type="button" class="next-etapa">Ver Produto</button>
+      <!-- ===== ETAPA 2 — Prancha ===== -->
+      <div class="etapa" data-etapa="2">
+        <div class="etapa-filters">
+          <header class="stage-header">
+            <div class="stage-icon"><i class="ph ph-ruler" aria-hidden="true"></i></div>
+            <div class="stage-copy">
+              <span>02 / Equipamento</span>
+              <h2>Prancha</h2>
+              <p>Agora vamos entender o desenho, o tamanho e a configuração da sua prancha.</p>
+            </div>
+            <div class="stage-art" aria-hidden="true">
+              <i class="ph ph-bezier-curve"></i>
+              <i class="ph ph-ruler"></i>
+              <i class="ph ph-wave-sine"></i>
+            </div>
+          </header>
+
+          <div class="fields-grid prancha-grid">
+            <div class="filter-group" data-field="prancha">
+              <label><strong>Tipo de prancha</strong></label>
+              <div class="opcoes" id="op-prancha"></div>
+            </div>
+            <div class="filter-group" data-field="modalidade">
+              <label><strong>Configuração de quilhas</strong></label>
+              <div class="opcoes" id="op-modalidade"></div>
+            </div>
+            <div class="filter-group" data-field="tamanho_da_prancha">
+              <label><strong>Tamanho da prancha</strong></label>
+              <select name="tamanho_da_prancha" class="filter-select" id="sel-tamprancha"></select>
+            </div>
+            <div class="filter-group" data-field="peso_da_prancha">
+              <label><strong>Peso da prancha</strong></label>
+              <select name="peso_da_prancha" class="filter-select" id="sel-pesoprancha"></select>
+            </div>
+            <div class="filter-group field-wide" data-field="rabeta">
+              <label><strong>Formato da rabeta</strong></label>
+              <div class="opcoes image-options" id="op-rabeta"></div>
+            </div>
+            <div class="filter-group field-wide" data-field="tipo_de_encaixe">
+              <label><strong>Tipo de encaixe</strong></label>
+              <div class="opcoes image-options" id="op-encaixe"></div>
+            </div>
+          </div>
+
+          <footer class="stage-footer">
+            <div class="detail-note">
+              <i class="ph ph-ruler" aria-hidden="true"></i>
+              <div><strong>Geometria em foco</strong><span>Rabeta, peso e encaixe definem controle e resposta.</span></div>
+            </div>
+            <div class="buttonsnp">
+              <button type="button" class="prev-etapa"><i class="ph ph-arrow-left" aria-hidden="true"></i> Voltar</button>
+              <button type="button" class="next-etapa">Continuar <i class="ph ph-arrow-right" aria-hidden="true"></i></button>
+            </div>
+          </footer>
         </div>
       </div>
-    </div>
 
-    <!-- ===== ETAPA 4 — Resultado ===== -->
-    <div class="etapa" data-etapa="4">
-      <div id="filtered-products"></div>
-      <div class="other-products" id="other-products"></div>
-      <div class="buttonsnp" style="justify-content:flex-start;">
-        <button type="button" class="prev-etapa">Voltar</button>
-        <button type="button" class="next-etapa" id="btn-reiniciar">Recomeçar</button>
+      <!-- ===== ETAPA 3 — Onda ===== -->
+      <div class="etapa" data-etapa="3">
+        <div class="etapa-filters">
+          <header class="stage-header">
+            <div class="stage-icon"><i class="ph ph-wave-sine" aria-hidden="true"></i></div>
+            <div class="stage-copy">
+              <span>03 / Condições</span>
+              <h2>Onda</h2>
+              <p>O tamanho e a velocidade da onda completam o cenário da recomendação.</p>
+            </div>
+            <div class="stage-art" aria-hidden="true">
+              <i class="ph ph-wind"></i>
+              <i class="ph ph-wave-sine"></i>
+              <i class="ph ph-sun-horizon"></i>
+            </div>
+          </header>
+
+          <div class="fields-grid onda-grid">
+            <div class="filter-group" data-field="tamanho_de_onda">
+              <label><strong>Tamanho de onda mais frequente</strong></label>
+              <select name="tamanho_de_onda" class="filter-select" id="sel-onda"></select>
+            </div>
+            <div class="filter-group" data-field="tipo_de_onda">
+              <label><strong>Velocidade da onda</strong></label>
+              <select name="tipo_de_onda" class="filter-select" id="sel-tipoonda"></select>
+            </div>
+          </div>
+
+          <footer class="stage-footer">
+            <div class="detail-note">
+              <i class="ph ph-wave-sine" aria-hidden="true"></i>
+              <div><strong>Leia o mar</strong><span>A quilha certa conecta sua prancha ao ritmo da onda.</span></div>
+            </div>
+            <div class="buttonsnp">
+              <button type="button" class="prev-etapa"><i class="ph ph-arrow-left" aria-hidden="true"></i> Voltar</button>
+              <button type="button" class="next-etapa">Ver resultado <i class="ph ph-arrow-right" aria-hidden="true"></i></button>
+            </div>
+          </footer>
+        </div>
       </div>
-    </div>
 
-  </form>
-</div>
+      <!-- ===== ETAPA 4 — Resultado ===== -->
+      <div class="etapa resultado-etapa" data-etapa="4">
+        <div class="result-header">
+          <div class="stage-icon"><i class="ph ph-sparkle" aria-hidden="true"></i></div>
+          <div class="stage-copy">
+            <span>04 / Recomendação</span>
+            <h2>Resultado</h2>
+            <p>A combinação que melhor conversa com seu perfil, sua prancha e as ondas que você surfa.</p>
+          </div>
+        </div>
+        <div id="filtered-products"></div>
+        <div class="other-products" id="other-products"></div>
+        <footer class="result-footer">
+          <button type="button" class="prev-etapa"><i class="ph ph-arrow-left" aria-hidden="true"></i> Voltar</button>
+          <button type="button" class="next-etapa" id="btn-reiniciar"><i class="ph ph-arrow-counter-clockwise" aria-hidden="true"></i> Recomeçar</button>
+        </footer>
+      </div>
+    </form>
+  </section>
+</main>
+
+<footer class="benefit-strip" aria-label="Benefícios">
+  <div><i class="ph ph-ruler" aria-hidden="true"></i><p><strong>Escolha assertiva</strong><span>Mais performance e diversão</span></p></div>
+  <div><i class="ph ph-wave-sine" aria-hidden="true"></i><p><strong>Para todos os dias</strong><span>De mar pequeno a mar grande</span></p></div>
+  <div><i class="ph ph-sun" aria-hidden="true"></i><p><strong>Mais controle</strong><span>Estabilidade, velocidade e fluidez</span></p></div>
+  <div><i class="ph ph-heart" aria-hidden="true"></i><p><strong>Feito por surfistas</strong><span>Experiência que gera confiança</span></p></div>
+</footer>
 
 <script>
 /* ============================================================
@@ -599,7 +2161,7 @@ function montarImgs(containerId, campo){
 function montarSelect(selectId, campo){
   const sel = document.getElementById(selectId);
   sel.name = campo;
-  sel.appendChild(el(`<option value="">Todos</option>`));
+  sel.appendChild(el(`<option value="">Selecione</option>`));
   FILTROS[campo].opcoes.forEach(op => sel.appendChild(el(`<option value="${op.v}">${op.t}</option>`)));
 }
 
@@ -607,11 +2169,10 @@ montarPills('op-prancha','prancha');
 montarPills('op-modalidade','modalidade');
 montarPills('op-nivel','nivel_de_habilidade');
 montarPills('op-sexo','sexo');
-montarPills('op-objetivo','objetivo');
 montarImgs('op-rabeta','rabeta');
 montarImgs('op-encaixe','tipo_de_encaixe');
-montarSelect('sel-altura','altura_do_surfista');
 montarSelect('sel-peso','peso_do_surfista');
+montarSelect('sel-objetivo','objetivo');
 montarSelect('sel-tamprancha','tamanho_da_prancha');
 montarSelect('sel-pesoprancha','peso_da_prancha');
 montarSelect('sel-onda','tamanho_de_onda');
@@ -695,17 +2256,22 @@ function renderResultado(){
 /* ============================================================
    5. NAVEGAÇÃO ENTRE ETAPAS + EVENTOS
    ============================================================ */
-let etapaAtual = 0;
+let etapaAtual = 1;
+function atualizarProgresso(n){
+  document.querySelectorAll('[data-progress-step]').forEach(item => {
+    item.classList.toggle('is-active', Number(item.dataset.progressStep) === n);
+  });
+}
 function mostrarEtapa(n){
   document.querySelectorAll('.etapa').forEach(e => e.classList.remove('ativa'));
   const alvo = document.querySelector(`.etapa[data-etapa="${n}"]`);
   alvo.classList.add('ativa');
   etapaAtual = n;
+  atualizarProgresso(n);
   if(n === 4) renderResultado();
   window.scrollTo({top: document.getElementById('dynamic-filters').offsetTop - 20, behavior:'smooth'});
 }
 
-document.querySelector('.start-etapa').addEventListener('click', () => mostrarEtapa(1));
 document.querySelectorAll('.next-etapa').forEach(b => b.addEventListener('click', e => {
   if(e.target.id === 'btn-reiniciar'){ // recomeçar
     Object.keys(state).forEach(k => delete state[k]);
@@ -754,6 +2320,7 @@ document.querySelectorAll('select.filter-select').forEach(sel => {
 });
 
 atualizarDisponibilidade();
+atualizarProgresso(1);
 /* fim */
 </script>
 </body>
