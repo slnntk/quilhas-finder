@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ferramenta Mágica — Encontre a quilha ideal</title>
+<style>
+  /* ==========================================================
+     FERRAMENTA MÁGICA — réplica standalone (HTML + CSS + JS)
+     Baseada na ferramenta de centerfins.com.br
+     ========================================================== */
+  :root{
+    --preto:#000;
+    --branco:#fff;
+    --cinza-texto:#555;
+    --cinza-claro:#888;
+    --borda:#ddd;
+    --radius-pill:30px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    color:#333;
+    background:#fff;
+  }
+  .fm-wrapper{max-width:1140px;margin:0 auto;padding:24px;}
+  .fm-titulo{font-size:2rem;margin:0 0 8px;}
+  .fm-sub{margin:0 0 24px;color:var(--cinza-texto);}
+
+  /* ---------- etapas ---------- */
+  .etapa{display:none;min-height:510px;animation:fadeIn .5s ease;}
+  .etapa.ativa{display:flex;flex-direction:column;}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+  /* introdução */
+  .etapa-introducao{
+    border-radius:5px;color:#fff;flex-direction:column;
+    justify-content:center;align-items:center;position:relative;overflow:hidden;
+    background-image:url('https://centerfins.com.br/wp-content/uploads/2024/09/joseph-greve-TII6axq3eo4-unsplash-scaled.jpg');
+    background-size:cover;background-position:center;text-align:center;padding:24px;
+  }
+  .etapa-introducao::before{
+    content:'';position:absolute;inset:0;background:rgba(0,0,0,.5);z-index:1;
+  }
+  .etapa-introducao h1{font-weight:bold;z-index:2;position:relative;}
+  .start-etapa{
+    position:relative;z-index:2;background:transparent;color:#fff;
+    padding:15px 90px;border:2px solid #fff;border-radius:var(--radius-pill);
+    cursor:pointer;font-weight:bold;transition:background .3s,color .3s;font-size:1rem;
+  }
+  .start-etapa:hover{background:#fff;color:#000;}
+
+  .etapa-filters{padding:30px;flex:1;}
+  .etapa-arrow{width:200px;margin-bottom:20px;display:block;}
+
+  .filter-group{margin-bottom:22px;}
+  .filter-group>label{display:block;padding-bottom:10px;}
+  .opcoes{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+
+  /* pílulas de texto (radio) */
+  .radio-label{cursor:pointer;}
+  .radio-label input{position:absolute;opacity:0;pointer-events:none;}
+  .radio-label p{
+    display:inline-block;margin:0;padding:10px 20px;border-radius:var(--radius-pill);
+    border:1px solid #000;background:#fff;color:#000;font-weight:400;
+    transition:background .3s,color .3s;user-select:none;
+  }
+  .radio-label input:checked + p{background:#000;color:#fff;}
+  .radio-label.indisponivel{display:none;}
+
+  /* radios com imagem (rabeta / encaixe) */
+  .img-label{text-align:center;}
+  .img-label img{
+    width:150px;border:2px solid transparent;border-radius:8px;
+    transition:border-color .3s;cursor:pointer;display:block;
+  }
+  .img-label img:hover{border-color:#000;}
+  .img-label input:checked + div img{border-color:#000;}
+  .img-label small{display:block;margin-top:4px;color:var(--cinza-claro);}
+
+  select.filter-select{
+    display:block;border-radius:var(--radius-pill);margin-bottom:10px;
+    padding:10px 16px;border:1px solid #000;background:#fff;font-size:.95rem;min-width:220px;
+  }
+
+  .buttonsnp{width:100%;display:flex;align-items:center;gap:14px;}
+  button.next-etapa{
+    margin-top:15px;padding:10px 20px;border:none;background:#000;color:#fff;
+    cursor:pointer;border-radius:50px;font-size:.95rem;transition:opacity .3s;
+  }
+  button.next-etapa:hover{opacity:.8;}
+  button.prev-etapa{
+    margin-top:15px;padding:10px 20px;background:#fff;border:1px solid #000;color:#000;
+    border-radius:var(--radius-pill);cursor:pointer;font-size:.95rem;
+  }
+
+  /* ---------- resultado ---------- */
+  #filtered-products{flex:1;}
+  .produto-item{
+    max-width:100%;border:1px solid var(--borda);padding:15px;margin-bottom:20px;
+    border-radius:10px;display:flex;justify-content:space-around;align-items:center;gap:20px;
+  }
+  .produto-item img.produto-foto{max-height:420px;max-width:45%;border-radius:8px;object-fit:contain;}
+  .div-produto{width:45%;display:flex;flex-direction:column;}
+  .produto-header h2{font-size:2.2rem;color:#333;margin:0 0 10px;}
+  .produto-desc{margin:10px 0 20px;font-style:italic;color:#444;}
+  .produto-body span.meta{font-size:1em;color:var(--cinza-claro);margin-right:20px;}
+  .produto-preco{font-size:1.7em;color:var(--cinza-texto);margin:20px 0;display:block;font-weight:bold;}
+  .produto-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .produto-actions a{
+    text-decoration:none;padding:8px 18px;border-radius:var(--radius-pill);font-size:15px;
+  }
+  .produto-actions .ver-produto{background:#fff;color:#000;border:2px solid #000;}
+  .produto-actions .adicionar{background:#000;color:#fff;border:2px solid #000;}
+  .match-badge{
+    display:inline-block;background:#eef7ee;color:#1a6b1a;border:1px solid #bfe3bf;
+    border-radius:var(--radius-pill);padding:4px 12px;font-size:.8rem;margin-bottom:10px;
+  }
+
+  .other-products{display:none;width:100%;gap:20px;padding:30px 0;}
+  .other-products.visivel{display:flex;justify-content:space-between;}
+  .produto-item-other{
+    flex-direction:column;flex:1;border:1px solid var(--borda);border-radius:10px;
+    padding:15px;display:flex;text-align:left;
+  }
+  .produto-item-other img{width:100%;height:220px;object-fit:contain;border-radius:8px;}
+  .produto-item-other h3{font-size:1.3rem;margin:10px 0;}
+  .produto-item-other .produto-preco{font-size:1.3em;margin:10px 0;}
+
+  .sem-produto{padding:40px;text-align:center;color:var(--cinza-claro);font-size:1.1rem;}
+
+  /* ---------- responsivo ---------- */
+  @media (max-width:768px){
+    .produto-item{flex-direction:column;}
+    .produto-item img.produto-foto{max-width:100%;}
+    .div-produto{width:100%;}
+    .produto-header h2{font-size:1.8rem;text-align:center;}
+    .other-products.visivel{flex-direction:column;}
+    .img-label img{width:110px;}
+    .etapa-introducao h1{font-size:1.6rem;}
+    .start-etapa{padding:12px 40px;}
+  }
+</style>
+</head>
+<body>
+<div class="fm-wrapper">
+  <h2 class="fm-titulo">Ferramenta Mágica</h2>
+  <p class="fm-sub">Explore nossa ferramenta para descobrir a quilha ideal para o seu momento de surf.
+  Lembre-se: cada surfista é único, e a escolha pode variar com a sua experiência e preferências.</p>
+
+  <form id="dynamic-filters" onsubmit="return false;">
+
+    <!-- ===== INTRO ===== -->
+    <div class="etapa etapa-introducao ativa" data-etapa="0">
+      <h1>Encontre a quilha ideal para sua prancha</h1>
+      <button type="button" class="start-etapa">Começar</button>
+    </div>
+
+    <!-- ===== ETAPA 1 — Surfista ===== -->
+    <div class="etapa" data-etapa="1">
+      <div class="etapa-filters">
+        <img class="etapa-arrow" src="https://centerfins.com.br/wp-content/uploads/2024/09/arrow01.svg" alt="Etapa 1">
+        <div class="filter-group" data-field="prancha">
+          <label><strong>Qual seu tipo de prancha?:</strong></label>
+          <div class="opcoes" id="op-prancha"></div>
+        </div>
+        <div class="filter-group" data-field="modalidade">
+          <label><strong>Qual a categoria da sua prancha?:</strong></label>
+          <div class="opcoes" id="op-modalidade"></div>
+        </div>
+        <div class="filter-group" data-field="nivel_de_habilidade">
+          <label><strong>Qual seu nível de habilidade?:</strong></label>
+          <div class="opcoes" id="op-nivel"></div>
+        </div>
+        <div class="filter-group" data-field="sexo">
+          <label><strong>Qual seu sexo?:</strong></label>
+          <div class="opcoes" id="op-sexo"></div>
+        </div>
+        <div class="filter-group" data-field="altura_do_surfista">
+          <label><strong>Qual sua altura?:</strong></label>
+          <select name="altura_do_surfista" class="filter-select" id="sel-altura"></select>
+        </div>
+        <div class="filter-group" data-field="peso_do_surfista">
+          <label><strong>Qual seu peso?:</strong></label>
+          <select name="peso_do_surfista" class="filter-select" id="sel-peso"></select>
+        </div>
+        <button type="button" class="next-etapa">Próxima Etapa</button>
+      </div>
+    </div>
+
+    <!-- ===== ETAPA 2 — Prancha ===== -->
+    <div class="etapa" data-etapa="2">
+      <div class="etapa-filters">
+        <img class="etapa-arrow" src="https://centerfins.com.br/wp-content/uploads/2024/09/arrow02.svg" alt="Etapa 2">
+        <div class="filter-group" data-field="objetivo">
+          <label><strong>Qual seu objetivo?:</strong></label>
+          <div class="opcoes" id="op-objetivo"></div>
+        </div>
+        <div class="filter-group" data-field="tamanho_da_prancha">
+          <label><strong>Qual tamanho da sua prancha?:</strong></label>
+          <select name="tamanho_da_prancha" class="filter-select" id="sel-tamprancha"></select>
+        </div>
+        <div class="filter-group" data-field="peso_da_prancha">
+          <label><strong>Qual peso da sua prancha?:</strong></label>
+          <select name="peso_da_prancha" class="filter-select" id="sel-pesoprancha"></select>
+        </div>
+        <div class="filter-group" data-field="rabeta">
+          <label><strong>Qual a rabeta da sua prancha?:</strong></label>
+          <div class="opcoes" id="op-rabeta"></div>
+        </div>
+        <div class="filter-group" data-field="tipo_de_encaixe">
+          <label><strong>Qual tipo de encaixe da prancha?:</strong></label>
+          <div class="opcoes" id="op-encaixe"></div>
+        </div>
+        <div class="buttonsnp">
+          <button type="button" class="prev-etapa">Voltar</button>
+          <button type="button" class="next-etapa">Próxima Etapa</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ETAPA 3 — Onda ===== -->
+    <div class="etapa" data-etapa="3">
+      <div class="etapa-filters">
+        <img class="etapa-arrow" src="https://centerfins.com.br/wp-content/uploads/2024/09/arrow03.svg" alt="Etapa 3">
+        <div class="filter-group" data-field="tamanho_de_onda">
+          <label><strong>Qual tamanho de onda você costuma pegar?:</strong></label>
+          <select name="tamanho_de_onda" class="filter-select" id="sel-onda"></select>
+        </div>
+        <div class="filter-group" data-field="tipo_de_onda">
+          <label><strong>Qual o tipo de onda você surfa?:</strong></label>
+          <select name="tipo_de_onda" class="filter-select" id="sel-tipoonda"></select>
+        </div>
+        <div class="buttonsnp">
+          <button type="button" class="prev-etapa">Voltar</button>
+          <button type="button" class="next-etapa">Ver Produto</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ETAPA 4 — Resultado ===== -->
+    <div class="etapa" data-etapa="4">
+      <div id="filtered-products"></div>
+      <div class="other-products" id="other-products"></div>
+      <div class="buttonsnp" style="justify-content:flex-start;">
+        <button type="button" class="prev-etapa">Voltar</button>
+        <button type="button" class="next-etapa" id="btn-reiniciar">Recomeçar</button>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<script>
+/* ============================================================
+   1. DEFINIÇÃO DOS FILTROS (idênticos à ferramenta original)
+   ============================================================ */
+const CDN = 'https://centerfins.com.br/wp-content/uploads';
+
+const FILTROS = {
+  prancha: {tipo:'pill', opcoes:[
+    {v:'longboard',  t:'Longboard'},
+    {v:'biquilha',   t:'Biquilha'},
+    {v:'mid-length', t:'Mid Length'},
+  ]},
+  modalidade: {tipo:'pill', opcoes:[
+    {v:'monoquilha',           t:'Monoquilha'},
+    {v:'biquilha',             t:'Biquilha'},
+    {v:'tri-quilha-2-mais-1',  t:'Tri Quilha 2+1'},
+  ]},
+  nivel_de_habilidade: {tipo:'pill', opcoes:[
+    {v:'iniciante',     t:'Iniciante'},
+    {v:'intermediario', t:'Intermediário'},
+    {v:'avancado',      t:'Avançado'},
+  ]},
+  sexo: {tipo:'pill', opcoes:[
+    {v:'masculino', t:'Masculino'},
+    {v:'feminino',  t:'Feminino'},
+  ]},
+  altura_do_surfista: {tipo:'select', opcoes:[
+    {v:'1-55mt-1-60mt', t:'1.55mt / 1.60mt'},
+    {v:'1-60mt-1-65mt', t:'1.60mt / 1.65mt'},
+    {v:'1-65mt-1-70mt', t:'1.65mt / 1.70mt'},
+    {v:'1-70mt-1-75mt', t:'1.70mt / 1.75mt'},
+    {v:'1-75mt-1-80mt', t:'1.75mt / 1.80mt'},
+    {v:'1-80mt-1-85mt', t:'1.80mt / 1.85mt'},
+    {v:'1-85mt-1-90mt', t:'1.85mt / 1.90mt'},
+    {v:'1-90mt-1-95mt', t:'1.90mt / 1.95mt'},
+    {v:'1-95mt-2mt',    t:'1.95mt / 2mt'},
+    {v:'2mt-2-10mt',    t:'2mt / 2.10mt'},
+    {v:'2-10mt',        t:'2.10mt'},
+  ]},
+  peso_do_surfista: {tipo:'select', opcoes:(()=> {
+    const o=[]; for(let k=55;k<=125;k+=5){o.push({v:`${k}kg-${k+5}kg`, t:`${k}kg / ${k+5}kg`});} return o;})()},
+  objetivo: {tipo:'pill', opcoes:[
+    {v:'velocidade-mais-troca-de-borda',                       t:'Velocidade + Troca de Borda'},
+    {v:'noseriding-estabilidade-lateral',                      t:'Noseriding + Estabilidade Lateral'},
+    {v:'velocidade-aceleracao-curvas-longas-horizontais',      t:'Velocidade / Aceleração com curvas mais longas e Horizontais'},
+    {v:'agressividade-performance-vertical-curvas-fechadas',   t:'Agressividade / Performance Vertical com curvas mais fechadas'},
+  ]},
+  tamanho_da_prancha: {tipo:'select', opcoes:(()=> {
+    const o=[];
+    for(let ft=6; ft<=9; ft++){
+      for(let inch=0; inch<=11; inch++){
+        if(ft===6||ft===7) { if(inch>11) continue; }
+        o.push({v:`${ft}${inch}`, t:`${ft}'${inch}"`});
+      }
+    }
+    o.push({v:'1000', t:`10'00"`});
+    return o;})()},
+  peso_da_prancha: {tipo:'select', opcoes:[
+    {v:'leve',t:'Leve'},{v:'moderada',t:'Moderada'},{v:'pesada',t:'Pesada'},
+  ]},
+  rabeta: {tipo:'img', opcoes:[
+    {v:'round-square',  img:`${CDN}/2024/09/round-square.png`,  t:'Round Square'},
+    {v:'square',        img:`${CDN}/2024/09/square.png`,        t:'Square'},
+    {v:'squash',        img:`${CDN}/2024/09/Squash.png`,        t:'Squash'},
+    {v:'round-squash',  img:`${CDN}/2024/09/round-squash.png`,  t:'Round Squash'},
+    {v:'pin',           img:`${CDN}/2024/09/pin.png`,           t:'Pin'},
+    {v:'round-pin',     img:`${CDN}/2024/09/round-pin.png`,     t:'Round Pin'},
+    {v:'diamond',       img:`${CDN}/2024/09/diamond.png`,       t:'Diamond'},
+    {v:'half-moon',     img:`${CDN}/2024/09/Half-moon.png`,     t:'Half Moon'},
+    {v:'swallow',       img:`${CDN}/2024/09/swallow.png`,       t:'Swallow'},
+    {v:'wing-swallow',  img:`${CDN}/2024/09/wing-swallow.png`,  t:'Wing Swallow'},
+    {v:'round-twin',    img:`${CDN}/2024/09/round-twin.png`,    t:'Round Twin'},
+  ]},
+  tipo_de_encaixe: {tipo:'img', opcoes:[
+    {v:'caixa-central-de-trilho',               img:`${CDN}/2024/09/caixa-central.png`,         t:'Caixa central de trilho'},
+    {v:'caixa-central-de-trilho-copinho-fcs1',  img:`${CDN}/2024/09/caixa-central-fcs1.png`,    t:'Caixa central + copinho FCS 1'},
+    {v:'caixa-central-de-trilho-copinho-fcsii', img:`${CDN}/2024/09/caixa-central-fcs2.png`,    t:'Caixa central + copinho FCS II'},
+    {v:'caixa-central-de-trilho-copinho-future',img:`${CDN}/2024/09/caixa-central-futures.png`, t:'Caixa central + copinho Futures'},
+    {v:'copinho-fcsii',                         img:`${CDN}/2024/09/fcs-2.png`,                 t:'Copinho FCS II'},
+    {v:'copinho-future',                        img:`${CDN}/2024/09/futures.png`,               t:'Copinho Futures'},
+  ]},
+  tamanho_de_onda: {tipo:'select', opcoes:[
+    {v:'0-mt-0-5mt', t:'0 mt / 0,5mt'},
+    {v:'0-5mt-1mt',  t:'0,5mt / 1 mt'},
+    {v:'1mt-1-5mt',  t:'1mt / 1,5mt'},
+    {v:'1-5mt-2mt',  t:'1,5mt / 2mt'},
+    {v:'2mt-2-5mt',  t:'2mt / 2,5mt'},
+  ]},
+  tipo_de_onda: {tipo:'select', opcoes:[
+    {v:'onda-rapida', t:'Onda Rápida'},
+    {v:'onda-lenta',  t:'Onda Lenta'},
+  ]},
+};
+
+/* ============================================================
+   2. CATÁLOGO — produtos reais da Center Fins (jul/2026)
+   ------------------------------------------------------------
+   Regra de matching por campo:
+   - lista vazia []  => o produto atende QUALQUER valor (não restringe)
+   - lista com itens => o produto só aparece se o valor escolhido estiver na lista
+   - tamanho_da_prancha usa faixa {min,max} em polegadas totais
+   Os atributos foram reconstruídos a partir das descrições oficiais
+   de cada produto (a lógica original roda no servidor WooCommerce).
+   ============================================================ */
+const PRODUTOS = [
+  {
+    id:'pe-no-bico', nome:'Pé no bico', preco:'470', categoria:'Monoquilha',
+    imagem:`${CDN}/2024/11/penobico-verdemedio.webp`,
+    link:'https://centerfins.com.br/produto/pe-no-bico/',
+    descricao:'Desenvolvida para conforto e segurança nas manobras de bico em Longboard Tradicional Single Fin pesado. Firmeza lateral e máxima sustentação de noseriding.',
+    match:{
+      prancha:['longboard'], modalidade:['monoquilha'],
+      nivel_de_habilidade:[], sexo:[], altura_do_surfista:[], peso_do_surfista:[],
+      objetivo:['noseriding-estabilidade-lateral'],
+      tamanho_da_prancha:{min:110,max:120}, peso_da_prancha:['pesada'],
+      rabeta:['square','round-square','squash','round-squash'],
+      tipo_de_encaixe:['caixa-central-de-trilho'],
+      tamanho_de_onda:['0-mt-0-5mt','0-5mt-1mt','1mt-1-5mt'], tipo_de_onda:['onda-lenta'],
+    },
+  },
+  {
+    id:'portuga', nome:'Portuga', preco:'460', categoria:'Monoquilha',
+    imagem:`${CDN}/2024/09/portuga-azul-acinzentado.webp`,
+    link:'https://centerfins.com.br/produto/portuga/',
+    descricao:'Entre a mobilidade da Bali e o arrasto da Pé no Bico. Pivô tradicional com controle lateral extremo, prancha presa ao pocket sem perder retomada de velocidade.',
+    match:{
+      prancha:['longboard'], modalidade:['monoquilha'],
+      nivel_de_habilidade:['intermediario','avancado'], sexo:[], altura_do_surfista:[], peso_do_surfista:[],
+      objetivo:['noseriding-estabilidade-lateral'],
+      tamanho_da_prancha:{min:110,max:120}, peso_da_prancha:['moderada','pesada'],
+      rabeta:['square','round-square','squash','round-squash','round-pin'],
+      tipo_de_encaixe:['caixa-central-de-trilho'],
+      tamanho_de_onda:['0-5mt-1mt','1mt-1-5mt','1-5mt-2mt'], tipo_de_onda:['onda-rapida','onda-lenta'],
+    },
+  },
+  {
+    id:'lambuja', nome:'Lambuja', preco:'465', categoria:'Monoquilha',
+    imagem:`${CDN}/2024/09/lambuja-mostarda.webp`,
+    link:'https://centerfins.com.br/produto/lambuja/',
+    descricao:'Parceria com Caio Teixeira. Entre uma Raked e uma Pivot: conforto no noseriding com jogo de cintura nas curvas. Ideal para pranchas clássicas em ondas cavadas e com pressão.',
+    match:{
+      prancha:['longboard'], modalidade:['monoquilha'],
+      nivel_de_habilidade:['intermediario','avancado'], sexo:[], altura_do_surfista:[], peso_do_surfista:[],
+      objetivo:['noseriding-estabilidade-lateral','velocidade-mais-troca-de-borda'],
+      tamanho_da_prancha:{min:110,max:120}, peso_da_prancha:['moderada','pesada'],
+      rabeta:['square','round-square','squash','round-squash','round-pin'],
+      tipo_de_encaixe:['caixa-central-de-trilho'],
+      tamanho_de_onda:['1mt-1-5mt','1-5mt-2mt','2mt-2-5mt'], tipo_de_onda:['onda-rapida'],
+    },
+  },
+  {
+    id:'caio-teixeira', nome:'Caio Teixeira', preco:'465', categoria:'Monoquilha',
+    imagem:`${CDN}/2024/09/caio-azul-novo.webp`,
+    link:'https://centerfins.com.br/produto/caio-teixeira/',
+    descricao:'Versatilidade: bom desempenho no bico e boa desenvoltura de rabeta. Aumenta a fluidez do longboard e a agilidade na troca de borda.',
+    match:{
+      prancha:['longboard'], modalidade:['monoquilha'],
+      nivel_de_habilidade:[], sexo:[], altura_do_surfista:[], peso_do_surfista:[],
+      objetivo:['velocidade-mais-troca-de-borda','noseriding-estabilidade-lateral'],
+      tamanho_da_prancha:{min:108,max:120}, peso_da_prancha:['leve','moderada'],
+      rabeta:['square','round-square','squash','round-squash','round-pin','pin'],
+      tipo_de_encaixe:['caixa-central-de-trilho'],
+      tamanho_de_onda:['0-5mt-1mt','1mt-1-5mt','1-5mt-2mt'], tipo_de_onda:['onda-rapida','onda-lenta'],
+    },
+  },
+  {
+    id:'jasmim-avelino', nome:'Jasmim Avelino', preco:'460', categoria:'Monoquilha',
+    imagem:`${CDN}/2024/09/jasmim-terra.webp`,
+    link:'https://centerfins.com.br/produto/jasmim-avelino-lancamento/',
+    descricao:'Da Bailarina do Mar: estabiliza a prancha em curvas fortes com velocidade e controle, sem perder o flow nas manobras de bico. Aprovada da marola à onda grande — todos os níveis.',
+    match:{
+      prancha:['longboard'], modalidade:['monoquilha'],
+      nivel_de_habilidade:[], sexo:[], altura_do_surfista:[], peso_do_surfista:[],
+      objetivo:['velocidade-mais-troca-de-borda','noseriding-estabilidade-lateral'],
+      tamanho_da_prancha:{min:108,max:120}, peso_da_prancha:[],
+      rabeta:['square','round-square','squash','round-squash','round-pin','pin'],
+      tipo_de_encaixe:['caixa-central-de-trilho'],
+      tamanho_de_onda:[], tipo_de_onda:[],
+    },
+  },
+  {
+    id:'tb-slim', nome:'TB Slim (Flex)', preco:'445', categoria:'Monoquilha',
+    imagem:`${CDN}/2024/09/tbslim-bordo.webp`,
+    link:'https://centerfins.com.br/produto/tb-slim/',
+    descricao:'Foco em velocidade, fluidez e troca de borda. Perfil slim com flex no trecho final e grip suave nas manobras de nose. Ajuda a passar seções difíceis da onda.',
+    match:{
+      prancha:['longboard'], modalidade:['monoquilha'],
+      nivel_de_habilidade:['intermediario','avancado'], sexo:[], altura_do_surfista:[], peso_do_surfista:[],
+      objetivo:['velocidade-mais-troca-de-borda'],
+      tamanho_da_prancha:{min:108,max:120}, peso_da_prancha:['leve','moderada'],
+      rabeta:['square','round-square','squash','round-squash','round-pin','pin'],
+      tipo_de_encaixe:['caixa-central-de-trilho'],
+      tamanho_de_onda:['0-5mt-1mt','1mt-1-5mt','1-5mt-2mt','2mt-2-5mt'], tipo_de_onda:['onda-rapida'],
+    },
+  },
+  {
+    id:'biquilha-speed', nome:'Biquilha Speed', preco:'490', categoria:'Biquilha',
+    imagem:`${CDN}/2024/12/20.webp`,
+    link:'https://centerfins.com.br/produto/biquilha-speed/',
+    descricao:'Totalmente voltada para projeção e velocidade. Quilha alongada que canaliza o fluxo de água para aceleração fácil. Linha horizontal — ideal para fish / old school.',
+    match:{
+      prancha:['biquilha'], modalidade:['biquilha'],
+      nivel_de_habilidade:[], sexo:[], altura_do_surfista:[], peso_do_surfista:[],
+      objetivo:['velocidade-aceleracao-curvas-longas-horizontais'],
+      tamanho_da_prancha:{min:72,max:96}, peso_da_prancha:['leve','moderada'],
+      rabeta:['swallow','wing-swallow','round-twin','half-moon','diamond'],
+      tipo_de_encaixe:['copinho-fcsii','copinho-future'],
+      tamanho_de_onda:['0-mt-0-5mt','0-5mt-1mt','1mt-1-5mt'], tipo_de_onda:['onda-rapida','onda-lenta'],
+    },
+  },
+  {
+    id:'biquilha-series', nome:'Biquilha Séries', preco:'480', categoria:'Biquilha',
+    imagem:`${CDN}/2024/12/6.jpg`,
+    link:'https://centerfins.com.br/produto/biquilha-series/',
+    descricao:'Performance de ataque com fluidez. Maior profundidade para troca de borda e ataque ao lip com segurança. Indicada para Twin Pins e biquilhas de outline próximo às shortboards.',
+    match:{
+      prancha:['biquilha'], modalidade:['biquilha'],
+      nivel_de_habilidade:['intermediario','avancado'], sexo:[], altura_do_surfista:[], peso_do_surfista:[],
+      objetivo:['agressividade-performance-vertical-curvas-fechadas','velocidade-mais-troca-de-borda'],
+      tamanho_da_prancha:{min:72,max:90}, peso_da_prancha:['leve','moderada'],
+      rabeta:['round-twin','swallow','round-pin','diamond'],
+      tipo_de_encaixe:['copinho-fcsii','copinho-future'],
+      tamanho_de_onda:['0-5mt-1mt','1mt-1-5mt','1-5mt-2mt'], tipo_de_onda:['onda-rapida'],
+    },
+  },
+  {
+    id:'jogo-nusa', nome:'Jogo Nusa + Estabilizadores', preco:'447', precoMax:'498', categoria:'Triquilha 2+1',
+    imagem:`${CDN}/2026/05/9.png`,
+    link:'https://centerfins.com.br/produto/jogo-nusa-estabilizadores/',
+    descricao:'Configuração 2+1 (dois estabilizadores + central). Feito para Mid Lengths, Bonzers e shortboards com caixa central. Agilidade e estabilidade com rabeta responsiva e fluida. Central 6" a 7".',
+    match:{
+      prancha:['mid-length'], modalidade:['tri-quilha-2-mais-1'],
+      nivel_de_habilidade:[], sexo:[], altura_do_surfista:[], peso_do_surfista:[],
+      objetivo:['velocidade-mais-troca-de-borda','agressividade-performance-vertical-curvas-fechadas'],
+      tamanho_da_prancha:{min:72,max:96}, peso_da_prancha:['leve','moderada'],
+      rabeta:['squash','round-squash','round-pin','pin','diamond','round-square'],
+      tipo_de_encaixe:['caixa-central-de-trilho-copinho-fcs1','caixa-central-de-trilho-copinho-fcsii','caixa-central-de-trilho-copinho-future'],
+      tamanho_de_onda:['0-5mt-1mt','1mt-1-5mt','1-5mt-2mt'], tipo_de_onda:['onda-rapida','onda-lenta'],
+    },
+  },
+  {
+    id:'jogo-snapper', nome:'Jogo Snapper + Estabilizadores', preco:'447', precoMax:'520', categoria:'Triquilha 2+1',
+    imagem:`${CDN}/2024/09/snapper-preta-fcs2.webp`,
+    link:'https://centerfins.com.br/produto/jogo-snapper-estabilizadores/',
+    descricao:'Configuração 2+1 para Longboard Progressivo, Mid Lengths, Bonzers e shortboards com caixa central. Central de 7" a 8" com estabilizadores P/M/G. Performance de rabeta.',
+    match:{
+      prancha:['mid-length','longboard'], modalidade:['tri-quilha-2-mais-1'],
+      nivel_de_habilidade:['intermediario','avancado'], sexo:[], altura_do_surfista:[], peso_do_surfista:[],
+      objetivo:['agressividade-performance-vertical-curvas-fechadas','velocidade-mais-troca-de-borda'],
+      tamanho_da_prancha:{min:84,max:120}, peso_da_prancha:['leve','moderada'],
+      rabeta:['squash','round-squash','round-pin','pin','round-square','square'],
+      tipo_de_encaixe:['caixa-central-de-trilho-copinho-fcs1','caixa-central-de-trilho-copinho-fcsii','caixa-central-de-trilho-copinho-future'],
+      tamanho_de_onda:['0-5mt-1mt','1mt-1-5mt','1-5mt-2mt','2mt-2-5mt'], tipo_de_onda:['onda-rapida','onda-lenta'],
+    },
+  },
+  {
+    id:'triquilha-am2', nome:'Triquilha AM2 shortboard', preco:'398', categoria:'Triquilha 2+1',
+    imagem:`${CDN}/2026/05/2.png`,
+    link:'https://centerfins.com.br/produto/triquilha-am2-pranchinha/',
+    descricao:'Inspirada no template Al Merrick. Velocidade, drive e curvas longas com controle. Para ondas médias/grandes, beach breaks cavados e point breaks. Surfistas intermediários e avançados.',
+    match:{
+      prancha:['mid-length','biquilha'], modalidade:['tri-quilha-2-mais-1'],
+      nivel_de_habilidade:['intermediario','avancado'], sexo:[], altura_do_surfista:[],
+      peso_do_surfista:['65kg-70kg','70kg-75kg','75kg-80kg','80kg-85kg','85kg-90kg','90kg-95kg','95kg-100kg','100kg-105kg','105kg-110kg','110kg-115kg','115kg-120kg','120kg-125kg'],
+      objetivo:['velocidade-aceleracao-curvas-longas-horizontais','agressividade-performance-vertical-curvas-fechadas'],
+      tamanho_da_prancha:{min:72,max:84}, peso_da_prancha:['leve'],
+      rabeta:['squash','round-squash','round-pin','swallow'],
+      tipo_de_encaixe:['copinho-fcsii','copinho-future'],
+      tamanho_de_onda:['1mt-1-5mt','1-5mt-2mt','2mt-2-5mt'], tipo_de_onda:['onda-rapida'],
+    },
+  },
+];
+
+/* ============================================================
+   3. MOTOR DE MATCHING (replica o AJAX filtrar_produtos_woocommerce)
+   ============================================================ */
+const state = {}; // seleção atual { campo: valor }
+
+function pranchaCodeParaPolegadas(code){
+  // "60" -> 6'0" = 72in ; "811" -> 8'11" ; "1000" -> 10'0"
+  if(!code) return null;
+  if(code === '1000') return 120;
+  const s = String(code);
+  const pes = parseInt(s[0],10);
+  const pol = parseInt(s.slice(1),10) || 0;
+  return pes*12 + pol;
+}
+
+function campoAtende(produto, campo, valor){
+  if(!valor) return true; // "Todos"
+  const regra = produto.match[campo];
+  if(campo === 'tamanho_da_prancha'){
+    if(!regra || (Array.isArray(regra) && regra.length===0)) return true;
+    const inches = pranchaCodeParaPolegadas(valor);
+    return inches >= regra.min && inches <= regra.max;
+  }
+  if(!regra || regra.length === 0) return true; // não restringe
+  return regra.includes(valor);
+}
+
+function produtoAtende(produto, selecao){
+  return Object.keys(FILTROS).every(campo => campoAtende(produto, campo, selecao[campo]));
+}
+
+function produtosFiltrados(){
+  return PRODUTOS.filter(p => produtoAtende(p, state));
+}
+
+/* contagem estilo facet: opção disponível se existe >=1 produto que
+   atende a TODOS os outros filtros selecionados + essa opção */
+function opcaoDisponivel(campo, valor){
+  const selecaoSem = {...state};
+  delete selecaoSem[campo];
+  return PRODUTOS.some(p => produtoAtende(p, selecaoSem) && campoAtende(p, campo, valor));
+}
+
+/* ============================================================
+   4. RENDERIZAÇÃO DA UI
+   ============================================================ */
+function el(html){
+  const t = document.createElement('template');
+  t.innerHTML = html.trim();
+  return t.content.firstChild;
+}
+
+function montarPills(containerId, campo){
+  const cont = document.getElementById(containerId);
+  FILTROS[campo].opcoes.forEach(op => {
+    const label = el(`<label class="radio-label" data-campo="${campo}" data-valor="${op.v}">
+        <input type="radio" name="${campo}" value="${op.v}"><p>${op.t}</p></label>`);
+    cont.appendChild(label);
+  });
+}
+
+function montarImgs(containerId, campo){
+  const cont = document.getElementById(containerId);
+  FILTROS[campo].opcoes.forEach(op => {
+    const label = el(`<label class="radio-label img-label" data-campo="${campo}" data-valor="${op.v}">
+        <input type="radio" name="${campo}" value="${op.v}">
+        <div><img src="${op.img}" alt="${op.t}" loading="lazy"><small>${op.t}</small></div></label>`);
+    cont.appendChild(label);
+  });
+}
+
+function montarSelect(selectId, campo){
+  const sel = document.getElementById(selectId);
+  sel.name = campo;
+  sel.appendChild(el(`<option value="">Todos</option>`));
+  FILTROS[campo].opcoes.forEach(op => sel.appendChild(el(`<option value="${op.v}">${op.t}</option>`)));
+}
+
+montarPills('op-prancha','prancha');
+montarPills('op-modalidade','modalidade');
+montarPills('op-nivel','nivel_de_habilidade');
+montarPills('op-sexo','sexo');
+montarPills('op-objetivo','objetivo');
+montarImgs('op-rabeta','rabeta');
+montarImgs('op-encaixe','tipo_de_encaixe');
+montarSelect('sel-altura','altura_do_surfista');
+montarSelect('sel-peso','peso_do_surfista');
+montarSelect('sel-tamprancha','tamanho_da_prancha');
+montarSelect('sel-pesoprancha','peso_da_prancha');
+montarSelect('sel-onda','tamanho_de_onda');
+montarSelect('sel-tipoonda','tipo_de_onda');
+
+/* -------- disponibilidade dinâmica (esconde opções sem produto) ------- */
+function atualizarDisponibilidade(){
+  document.querySelectorAll('label.radio-label').forEach(label => {
+    const campo = label.dataset.campo, valor = label.dataset.valor;
+    const ok = opcaoDisponivel(campo, valor);
+    label.classList.toggle('indisponivel', !ok);
+    label.querySelector('input').disabled = !ok;
+    if(!ok && state[campo] === valor){ // limpa seleção que ficou impossível
+      label.querySelector('input').checked = false;
+      delete state[campo];
+    }
+  });
+  document.querySelectorAll('select.filter-select').forEach(sel => {
+    const campo = sel.name;
+    [...sel.options].forEach(opt => {
+      if(opt.value === '') return;
+      const ok = opcaoDisponivel(campo, opt.value);
+      opt.disabled = !ok;
+      opt.style.display = ok ? '' : 'none';
+    });
+  });
+}
+
+/* -------- resultado (etapa 4) ------- */
+function precoFmt(p){
+  return p.precoMax ? `R$${p.preco} – R$${p.precoMax}` : `R$${p.preco}`;
+}
+
+function renderResultado(){
+  const lista = produtosFiltrados();
+  const alvo = document.getElementById('filtered-products');
+  const outros = document.getElementById('other-products');
+  outros.innerHTML = '';
+  if(lista.length === 0){
+    alvo.innerHTML = `<p class="sem-produto">Nenhum produto encontrado. Volte e ajuste os filtros.</p>`;
+    outros.classList.remove('visivel');
+    return;
+  }
+  const p = lista[0];
+  alvo.innerHTML = `
+    <div class="produto-item">
+      <img class="produto-foto" src="${p.imagem}" alt="${p.nome}">
+      <div class="div-produto">
+        <span class="match-badge">Recomendação para o seu perfil</span>
+        <div class="produto-header"><h2>${p.nome}</h2></div>
+        <span class="produto-desc">"${p.descricao}"</span>
+        <div class="produto-body">
+          <span class="meta">Categoria: ${p.categoria}</span>
+          <span class="meta">Avaliação: Sem Avaliações</span>
+          <span class="produto-preco">${precoFmt(p)}</span>
+        </div>
+        <div class="produto-actions">
+          <a class="ver-produto" href="${p.link}" target="_blank" rel="noopener">Ver Produto</a>
+          <a class="adicionar" href="${p.link}" target="_blank" rel="noopener">Comprar no site</a>
+        </div>
+      </div>
+    </div>`;
+  const demais = lista.slice(1, 4);
+  if(demais.length){
+    outros.classList.add('visivel');
+    demais.forEach(o => outros.appendChild(el(`
+      <div class="produto-item-other">
+        <img src="${o.imagem}" alt="${o.nome}" loading="lazy">
+        <h3>${o.nome}</h3>
+        <span class="meta" style="color:#888;font-size:.9em;">Categoria: ${o.categoria}</span>
+        <span class="produto-preco">${precoFmt(o)}</span>
+        <div class="produto-actions">
+          <a class="ver-produto" href="${o.link}" target="_blank" rel="noopener">Ver Produto</a>
+        </div>
+      </div>`)));
+  } else {
+    outros.classList.remove('visivel');
+  }
+}
+
+/* ============================================================
+   5. NAVEGAÇÃO ENTRE ETAPAS + EVENTOS
+   ============================================================ */
+let etapaAtual = 0;
+function mostrarEtapa(n){
+  document.querySelectorAll('.etapa').forEach(e => e.classList.remove('ativa'));
+  const alvo = document.querySelector(`.etapa[data-etapa="${n}"]`);
+  alvo.classList.add('ativa');
+  etapaAtual = n;
+  if(n === 4) renderResultado();
+  window.scrollTo({top: document.getElementById('dynamic-filters').offsetTop - 20, behavior:'smooth'});
+}
+
+document.querySelector('.start-etapa').addEventListener('click', () => mostrarEtapa(1));
+document.querySelectorAll('.next-etapa').forEach(b => b.addEventListener('click', e => {
+  if(e.target.id === 'btn-reiniciar'){ // recomeçar
+    Object.keys(state).forEach(k => delete state[k]);
+    document.querySelectorAll('#dynamic-filters input[type=radio]').forEach(i => i.checked = false);
+    document.querySelectorAll('#dynamic-filters select').forEach(s => s.value = '');
+    atualizarDisponibilidade();
+    mostrarEtapa(1);
+    return;
+  }
+  if(etapaAtual < 4) mostrarEtapa(etapaAtual + 1);
+}));
+document.querySelectorAll('.prev-etapa').forEach(b => b.addEventListener('click', () => {
+  if(etapaAtual > 1) mostrarEtapa(etapaAtual - 1);
+}));
+
+/* clique em radio: seleciona; segundo clique no mesmo desmarca (como no original) */
+let lastChecked = null;
+document.getElementById('dynamic-filters').addEventListener('click', e => {
+  /* Ao clicar num <label>, o navegador sintetiza um segundo clique no <input>
+     associado. Tratamos apenas o evento cujo alvo é o próprio input,
+     garantindo exatamente 1 disparo por interação. */
+  if(!(e.target instanceof HTMLInputElement) || e.target.type !== 'radio') return;
+  const input = e.target;
+  if(input.disabled) return;
+  if(lastChecked === input && input.checked){
+    setTimeout(() => { // deixa o browser marcar, depois desmarca
+      input.checked = false;
+      delete state[input.name];
+      lastChecked = null;
+      atualizarDisponibilidade();
+    }, 0);
+  } else {
+    lastChecked = input;
+    setTimeout(() => {
+      state[input.name] = input.value;
+      atualizarDisponibilidade();
+    }, 0);
+  }
+});
+
+document.querySelectorAll('select.filter-select').forEach(sel => {
+  sel.addEventListener('change', () => {
+    if(sel.value) state[sel.name] = sel.value; else delete state[sel.name];
+    atualizarDisponibilidade();
+  });
+});
+
+atualizarDisponibilidade();
+/* fim */
+</script>
+</body>
+</html>
