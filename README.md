@@ -4,6 +4,8 @@ Calculadora interativa de quilhas da Logger Surf School. O wizard de quatro
 etapas recomenda a quilha ideal com base no perfil do surfista, da prancha e das
 ondas, usando um catálogo de produtos reais.
 
+Produção: [logger-finder-fins.vercel.app](https://logger-finder-fins.vercel.app)
+
 ## Estrutura
 
 - `index.html` — a calculadora completa (sem dependências externas de JS)
